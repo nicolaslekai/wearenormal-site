@@ -70,7 +70,9 @@
   /* ---------- the stream: two films per row ---------- */
   .stream{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--bg);}
   @media(max-width:700px){.stream{grid-template-columns:1fr;}}
-  .film{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;cursor:pointer;}
+  .film{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;cursor:pointer;
+    opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
+  .film.in{opacity:1;transform:none;}
   .film:last-child:nth-child(odd){grid-column:1/-1;}
   .film video{width:100%;height:100%;object-fit:cover;display:block;}
   .film .fcap{position:absolute;left:22px;bottom:18px;z-index:2;color:#fff;display:flex;align-items:baseline;gap:11px;
@@ -249,8 +251,13 @@ const scenes=[...document.querySelectorAll('[data-scene]')].map(sec=>({
 }));
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const filmEls=[...document.querySelectorAll('.film')];
 function tick(){
   const vh=innerHeight;
+  // fade thumbnails in as they enter the viewport (driven here, not by IO)
+  for(const f of filmEls){
+    if(!f._in && f.getBoundingClientRect().top<vh*0.92){f._in=true;f.classList.add('in');}
+  }
   for(const s of scenes){
     const r=s.sec.getBoundingClientRect();
     const total=r.height-vh;
