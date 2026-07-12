@@ -50,20 +50,15 @@
     opacity:0;animation:fadein 1s ease .9s forwards;}
   @keyframes rise{to{opacity:1;transform:none;}}
   @keyframes fadein{to{opacity:1;}}
-  .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,.6);
-    font-size:10px;letter-spacing:.3em;text-transform:uppercase;animation:bob 2s ease-in-out infinite;}
-  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
-  /* prompt card */
-  .meta{position:absolute;left:36px;bottom:44px;right:36px;z-index:3;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;}
-  .prompt{max-width:620px;}
-  .prompt .lbl{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px;}
-  .prompt .txt{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:clamp(12px,1.6vw,16px);line-height:1.6;color:#fff;
-    text-shadow:0 2px 18px rgba(0,0,0,.65);}
-  .prompt .txt::before{content:"“";} .prompt .txt::after{content:"”";}
-  .stamp{text-align:right;position:relative;min-width:210px;}
-  .stamp .yr{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:clamp(40px,6vw,84px);line-height:1;letter-spacing:-.02em;
-    color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.6);}
-  .stamp .md{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-top:8px;}
+  /* year counter stamp — centered */
+  .meta{position:absolute;left:0;right:0;bottom:64px;z-index:3;display:flex;justify-content:center;pointer-events:none;}
+  .stamp{text-align:center;}
+  .stamp .yr{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:clamp(52px,7vw,96px);line-height:1;letter-spacing:.01em;
+    color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.6);font-variant-numeric:tabular-nums;display:inline-block;}
+  .stamp .yr.tick{animation:yrtick .28s var(--ease);}
+  @keyframes yrtick{0%{transform:translateY(.14em);opacity:.2;}100%{transform:none;opacity:1;}}
+  .stamp .rule{width:44px;height:1px;background:rgba(255,255,255,.5);margin:14px auto 10px;}
+  .stamp .md{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.7);}
   .num{position:absolute;top:100px;left:36px;z-index:3;font-family:"Times New Roman",Times,serif;font-style:italic;
     font-size:15px;color:rgba(255,255,255,.6);letter-spacing:.08em;}
 
@@ -140,9 +135,8 @@
       <div class="tag">A creative studio</div>
     </div>
     <div class="meta">
-      <div class="stamp"><div class="yr" data-year>2022</div><div class="md" data-model>DALL·E mini — 256px</div></div>
+      <div class="stamp"><div class="yr" data-year>2022</div><div class="rule"></div><div class="md" data-model>DALL·E mini — 256px</div></div>
     </div>
-    <div class="scrollcue">Scroll</div>
   </div>
 </section>
 
@@ -163,7 +157,7 @@
     <div class="veil"></div>
     <div class="num">The crew</div>
     <div class="meta">
-      <div class="stamp"><div class="yr" data-year>2022</div><div class="md" data-model>DALL·E mini — 256px</div></div>
+      <div class="stamp"><div class="yr" data-year>2022</div><div class="rule"></div><div class="md" data-model>DALL·E mini — 256px</div></div>
     </div>
   </div>
 </section>
@@ -265,8 +259,14 @@ function tick(){
     s.newImg.style.opacity=t;
     s.oldImg.style.transform=`scale(${1.04-0.04*t})`;
     s.newImg.style.transform=`scale(${1.02-0.02*t})`;
-    if(t>0.5){ s.year.textContent='2026'; s.model.textContent='NORMAL — production grade'; }
-    else{ s.year.textContent='2022'; s.model.textContent='DALL·E mini — 256px'; }
+    // year counts up with the develop: 2022 -> 2026
+    const yr=String(2022+Math.round(t*4));
+    if(s.year.textContent!==yr){
+      s.year.textContent=yr;
+      s.year.classList.remove('tick'); void s.year.offsetWidth; s.year.classList.add('tick');
+    }
+    const md=t>0.5?'NORMAL — production grade':'DALL·E mini — 256px';
+    if(s.model.textContent!==md) s.model.textContent=md;
   }
   requestAnimationFrame(tick);
 }
