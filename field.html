@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NORMAL — Field Prototype 01</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --cream:#F1EEE6;
+    --ink:#1C1F21;
+    --mid:#8a857a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;}
+
+  /* ---------- chrome ---------- */
+  header{position:fixed;top:0;left:0;right:0;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-start;z-index:40;pointer-events:none;}
+  .masthead h1{font-size:15px;font-weight:700;letter-spacing:.02em;}
+  .masthead .mono{color:var(--mid);margin-top:6px;}
+  .chip{pointer-events:auto;background:var(--ink);color:#fff;font-family:"Times New Roman",Times,serif;font-weight:700;font-size:20px;padding:8px 16px;letter-spacing:.01em;}
+  nav{position:fixed;left:32px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:14px;}
+  nav button{
+    all:unset;cursor:pointer;font-family:"SF Mono",Menlo,monospace;font-size:11px;
+    letter-spacing:.22em;color:var(--mid);transition:color .3s;display:flex;gap:10px;align-items:baseline;
+    background:rgba(241,238,230,.92);padding:5px 10px 5px 6px;width:fit-content;
+  }
+  nav button .idx{font-size:9px;opacity:.5;}
+  nav button:hover{color:var(--ink);}
+  nav button.active{color:var(--ink);}
+  nav button.active::after{content:"";display:inline-block;width:26px;height:1px;background:var(--ink);margin-left:4px;transform:translateY(-3px);}
+  .contact-link{position:fixed;left:32px;bottom:28px;z-index:40;}
+  .contact-link button{all:unset;cursor:pointer;font-family:"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.22em;color:var(--mid);transition:color .3s;background:rgba(241,238,230,.92);padding:5px 10px 5px 6px;}
+  .contact-link button:hover{color:var(--ink);}
+  .status{position:fixed;right:32px;bottom:28px;z-index:40;color:var(--mid);text-align:right;line-height:1.8;}
+
+  /* ---------- field (2.5D — transforms computed in JS) ---------- */
+  .field{position:absolute;inset:0;z-index:0;}
+  .card{
+    position:absolute;left:50%;top:50%;
+    cursor:pointer;will-change:transform;
+    transition:opacity .8s cubic-bezier(.22,1,.36,1), filter .8s cubic-bezier(.22,1,.36,1);
+  }
+  .card .frame{
+    position:relative;background:#fff;padding:6px 6px 0 6px;
+    box-shadow:0 18px 50px rgba(28,31,33,.18);
+  }
+  .card:hover .frame{box-shadow:0 30px 80px rgba(28,31,33,.28);}
+  .card img,.card video{display:block;width:100%;height:auto;pointer-events:none;}
+  .card video{position:absolute;top:6px;left:6px;width:calc(100% - 12px);height:calc(100% - 34px);object-fit:cover;opacity:0;transition:opacity .35s;}
+  .card.hovered video{opacity:1;}
+  .caption{display:flex;justify-content:space-between;gap:12px;padding:8px 2px;background:#fff;}
+  .caption .t{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .caption .c{font-family:"SF Mono",Menlo,monospace;font-size:8px;letter-spacing:.2em;color:var(--mid);text-transform:uppercase;flex-shrink:0;}
+  .card.dim{opacity:.06;filter:blur(2px) grayscale(.6);pointer-events:none;}
+  .card.txtcard .frame{background:var(--ink);color:var(--cream);padding:0;}
+  .card.txtcard .inner{padding:18px;display:flex;flex-direction:column;justify-content:space-between;height:100%;}
+  .card.txtcard .name{font-size:20px;font-weight:700;line-height:1.05;letter-spacing:.01em;}
+  .card.txtcard .role{font-family:"SF Mono",Menlo,monospace;font-size:9px;letter-spacing:.22em;color:#9a958a;}
+
+  /* ---------- overlay ---------- */
+  .overlay{
+    position:fixed;inset:0;background:var(--ink);z-index:60;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transition:opacity .5s;
+  }
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .overlay .bar{display:flex;justify-content:space-between;align-items:center;padding:24px 32px;color:var(--cream);}
+  .overlay .bar .t{font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;}
+  .overlay .bar .mono{color:#8a857a;margin-top:5px;}
+  .overlay .close{all:unset;cursor:pointer;color:var(--cream);font-family:"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.22em;padding:8px;}
+  .overlay .close:hover{opacity:.6;}
+  .overlay .vwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 32px 24px;}
+  .overlay iframe{width:min(1100px,90vw);aspect-ratio:16/9;height:auto;border:0;background:#000;}
+  .overlay .info{padding:0 32px 28px;color:#9a958a;font-size:12px;line-height:1.7;max-width:640px;}
+
+  .overlay.contact .cwrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 12vw;color:var(--cream);}
+  .overlay.contact h2{font-size:clamp(38px,7vw,96px);font-weight:700;line-height:1.0;letter-spacing:-.01em;}
+  .overlay.contact h2 .serif{font-family:"Times New Roman",Times,serif;}
+  .overlay.contact .rows{margin-top:7vh;display:flex;flex-direction:column;gap:18px;}
+  .overlay.contact a{color:var(--cream);text-decoration:none;border-bottom:1px solid #4a4a44;padding-bottom:4px;width:fit-content;font-size:16px;}
+  .overlay.contact a:hover{border-color:var(--cream);}
+
+  .hint{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:40;color:var(--mid);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="masthead">
+    <h1>NORMAL</h1>
+    <div class="mono">A CREATIVE AI STUDIO</div>
+  </div>
+  <div class="chip">normal.</div>
+</header>
+
+<nav id="nav">
+  <button data-cat="ALL"  class="active"><span class="idx">00</span>ALL</button>
+  <button data-cat="WORK"><span class="idx">01</span>WORK</button>
+  <button data-cat="PLAY"><span class="idx">02</span>PLAY</button>
+  <button data-cat="ABOUT"><span class="idx">03</span>ABOUT</button>
+</nav>
+<div class="contact-link"><button id="contactBtn">04&nbsp;&nbsp;CONTACT</button></div>
+
+<div class="status mono">
+  <div id="clock">—</div>
+  <div>FIELD&nbsp;PROTOTYPE&nbsp;01</div>
+</div>
+<div class="hint mono" id="hint">MOVE CURSOR · SCROLL TO DRIFT · CLICK A FILM</div>
+
+<div class="field" id="field"></div>
+
+<div class="overlay" id="filmOverlay">
+  <div class="bar">
+    <div><div class="t" id="ovTitle"></div><div class="mono" id="ovMeta"></div></div>
+    <button class="close" data-close="filmOverlay">CLOSE&nbsp;✕</button>
+  </div>
+  <div class="vwrap"><iframe id="ovFrame" src="about:blank" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+  <div class="info" id="ovInfo"></div>
+</div>
+
+<div class="overlay contact" id="contactOverlay">
+  <div class="bar">
+    <div><div class="t">CONTACT</div></div>
+    <button class="close" data-close="contactOverlay">CLOSE&nbsp;✕</button>
+  </div>
+  <div class="cwrap">
+    <h2>Let's make<br>something <span class="serif">normal.</span></h2>
+    <div class="rows">
+      <a href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
+      <span class="mono" style="color:#8a857a">LONDON · EVERYWHERE</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- data ----------------
+   tier 1 = hero (front), tier 2 = mid, tier 3 = back */
+const A = "assets/";
+const FILMS = [
+  {t:"CAFE MIO — MILA",     cat:"WORK", tier:1, img:"mila.jpg",     vid:"mila.mp4",     vimeo:"1207013277", w:300, info:"Rauch launch campaign in 8 countries. 36 versions: 15s, 10s and 6s in 16:9, 1:1, 5:4 and 9:16."},
+  {t:"CAFEMIO — LUKA",      cat:"WORK", tier:1, img:"luka.jpg",     vid:"luka.mp4",     vimeo:"1207013485", w:300, info:"Rauch launch campaign in 8 countries. 36 versions: 15s, 10s and 6s in 16:9, 1:1, 5:4 and 9:16."},
+  {t:"ÆTHER VODKA",         cat:"PLAY", tier:1, img:"aether.jpg",   vid:"aether.mp4",   vimeo:"1207014566", w:310, info:"Spec ad. AI visuals and AI music exploration."},
+  {t:"CHRISTMAS PYRAMID",   cat:"WORK", tier:1, img:"pyramid.jpg",  vid:"pyramid.mp4",  vimeo:"1207012840", w:300, info:"Cinema ad for a charity giving presents to disadvantaged children at Christmas."},
+  {t:"EISLIMO",             cat:"WORK", tier:1, img:"eislimo.jpg",  vid:"eislimo.mp4",  vimeo:"1207341451", w:310, info:"Rauch drink campaign."},
+  {t:"KARMINSKY GRID",      cat:"WORK", tier:2, img:"kgrid.jpg",    vid:"kgrid.mp4",    vimeo:"1207010814", w:290, info:"Grid of nine films — monthly social ads for a 60s & 70s soundtrack and library show on Soho Radio."},
+  {t:"A BRUTALIST SCULPTURE SHOW", cat:"PLAY", tier:2, img:"brutalist.jpg", vid:"brutalist.mp4", vimeo:"1207013727", w:290, info:"Barbican locations meet AI sculptures. 9:16 research project."},
+  {t:"VÉLANT DIVING WATCH", cat:"PLAY", tier:2, img:"velant.jpg",   vid:"velant.mp4",   vimeo:"1207009432", w:280, info:"Created using AI in 2024 for a CGI film of Munich Airport — designed for a central screen flanked by two posters."},
+  {t:"GLOSS THEORY",        cat:"PLAY", tier:2, img:"gloss.jpg",    vid:"gloss.mp4",    vimeo:"1207015256", w:270, info:"Hair ad test."},
+  {t:"NORMAL BRAND FILM",   cat:"ABOUT", tier:2, img:"brandfilm.jpg", vid:"brandfilm.mp4", vimeo:"1207010072", w:300, info:"We combine AI with decades of experience in live action and CGI filmmaking for leading brands."},
+  {t:"AAARGH ZOMBIES — 1",  cat:"PLAY", tier:3, img:"zombie1.jpg",  vid:null,           vimeo:"973145090",  w:150, info:"Public information campaign on the 'smart phone zombie' phenomenon."},
+  {t:"AAARGH ZOMBIES — 2",  cat:"PLAY", tier:3, img:"zombie2.jpg",  vid:null,           vimeo:"973142569",  w:150, info:"Public information campaign on the 'smart phone zombie' phenomenon."},
+  {t:"AAARGH ZOMBIES — 3",  cat:"PLAY", tier:3, img:"zombie3.jpg",  vid:null,           vimeo:"973140911",  w:150, info:"Public information campaign on the 'smart phone zombie' phenomenon."},
+  {t:"KARMINSKY 11-25",     cat:"WORK", tier:3, img:"karminsky1125.jpg", vid:null,      vimeo:"1207017610", w:220, info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"KARMINSKY 03-26",     cat:"WORK", tier:3, img:"karminsky0326.jpg", vid:null,      vimeo:"1207019215", w:220, info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"GUY NISBETT",  role:"CREATIVE DIRECTOR",  cat:"ABOUT", tier:3, txt:true, vimeo:"1104124501", w:200, h:200, info:"Multi-award winning creative, live action and CGI director. Post and generative AI specialist."},
+  {t:"NICOLAS LEKAI", role:"TECHNICAL DIRECTOR", cat:"ABOUT", tier:3, txt:true, vimeo:"1104124478", w:200, h:200, info:"CGI, Houdini, Nuke and Comfy UI artist. AI consultant, music composer and producer."},
+];
+
+/* ---------------- seeded RNG ---------------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+const rand = mulberry32(20260706);
+
+/* ---------------- placement: tier bands (front central, back peripheral) ---------------- */
+const BANDS = {
+  1:{rx:[0,380],   ry:[0,200],   z:[-80,-300]},
+  2:{rx:[320,640], ry:[150,340], z:[-380,-700]},
+  3:{rx:[480,820], ry:[220,440], z:[-740,-1100]},
+};
+function bandPos(tier){
+  const b = BANDS[tier];
+  const a = rand()*Math.PI*2;
+  const rx = b.rx[0] + rand()*(b.rx[1]-b.rx[0]);
+  const ry = b.ry[0] + rand()*(b.ry[1]-b.ry[0]);
+  return {
+    x: Math.cos(a)*rx,
+    y: Math.sin(a)*ry,
+    z: b.z[0] + rand()*(b.z[1]-b.z[0]),
+    r: (rand()-.5)*9
+  };
+}
+
+const field = document.getElementById("field");
+const cards = [];
+
+FILMS.forEach((f)=>{
+  const el = document.createElement("div");
+  el.className = "card" + (f.txt ? " txtcard" : "");
+  el.style.width = f.w + "px";
+  const frame = document.createElement("div");
+  frame.className = "frame";
+  if (f.txt){
+    frame.style.height = f.h + "px";
+    frame.innerHTML = `<div class="inner"><div class="name">${f.t.replace(" ", "<br>")}</div><div class="role">${f.role}</div></div>`;
+  } else {
+    frame.innerHTML = `<img src="${A+f.img}" draggable="false">` +
+      (f.vid ? `<video src="${A+f.vid}" muted loop playsinline preload="metadata"></video>` : "") +
+      `<div class="caption"><div class="t">${f.t}</div><div class="c">${f.cat}</div></div>`;
+  }
+  el.appendChild(frame); field.appendChild(el);
+
+  /* best-candidate placement inside the tier band */
+  let home = bandPos(f.tier);
+  const placed = cards.filter(c=>c.data.tier===f.tier);
+  if (placed.length){
+    let best = -1;
+    for (let k=0;k<28;k++){
+      const c = bandPos(f.tier);
+      const dMin = Math.min(...placed.map(o=>Math.hypot(c.x-o.home.x, (c.y-o.home.y)*1.7)));
+      if (dMin > best){ best = dMin; home = c; }
+    }
+  }
+  const card = {
+    el, data:f, home,
+    target:{...home},
+    cur:{...home, r:home.r},
+    hover:0, hovered:false,
+    bobPhase: rand()*Math.PI*2, bobSpeed: .5 + rand()*.5,
+  };
+  cards.push(card);
+
+  el.addEventListener("mouseenter", ()=>{
+    card.hovered = true; el.classList.add("hovered");
+    const v = el.querySelector("video"); if(v){ v.currentTime = 0; v.play().catch(()=>{}); }
+  });
+  el.addEventListener("mouseleave", ()=>{
+    card.hovered = false; el.classList.remove("hovered");
+    const v = el.querySelector("video"); if(v){ v.pause(); }
+  });
+  el.addEventListener("click", ()=> openFilm(f));
+});
+
+/* ---------------- categories ---------------- */
+let activeCat = "ALL";
+function setCategory(cat){
+  activeCat = cat;
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active", b.dataset.cat===cat));
+  if (cat === "ALL"){
+    cards.forEach(c => { c.target = {...c.home}; c.el.classList.remove("dim"); });
+    return;
+  }
+  const selected = cards.filter(c => c.data.cat===cat);
+  const others   = cards.filter(c => c.data.cat!==cat);
+  const n = selected.length;
+  const cols = Math.ceil(Math.sqrt(n * 1.7));
+  const rows = Math.ceil(n / cols);
+  const gapX = 350, gapY = 310;
+  selected.forEach((c,i)=>{
+    const col = i % cols, row = Math.floor(i / cols);
+    c.target = {
+      x: (col - (cols-1)/2) * gapX + (rand()-.5)*36,
+      y: (row - (rows-1)/2) * gapY + (rand()-.5)*26,
+      z: -80 - rand()*140,
+      r: (rand()-.5)*4
+    };
+    c.el.classList.remove("dim");
+  });
+  others.forEach(c=>{
+    c.target = {...c.home, z: c.home.z - 700};
+    c.el.classList.add("dim");
+  });
+}
+document.querySelectorAll("#nav button").forEach(b=> b.addEventListener("click", ()=> setCategory(b.dataset.cat)));
+
+/* ---------------- render loop: manual 2.5D projection ---------------- */
+const P = 1300;          /* perspective */
+let tx=0, ty=0, mx=0, my=0, tdolly=0, dolly=0;
+window.addEventListener("mousemove", e=>{
+  tx = (e.clientX / innerWidth - .5);
+  ty = (e.clientY / innerHeight - .5);
+});
+window.addEventListener("wheel", e=>{
+  tdolly = Math.max(-350, Math.min(950, tdolly + e.deltaY * .6));
+},{passive:true});
+
+function tick(t){
+  mx += (tx-mx)*.06; my += (ty-my)*.06; dolly += (tdolly-dolly)*.07;
+  for (const c of cards){
+    /* ease toward target */
+    c.cur.x += (c.target.x-c.cur.x)*.075;
+    c.cur.y += (c.target.y-c.cur.y)*.075;
+    c.cur.z += (c.target.z-c.cur.z)*.075;
+    c.cur.r += (c.target.r-c.cur.r)*.075;
+    c.hover += ((c.hovered?1:0)-c.hover)*.14;
+
+    const zEff = c.cur.z + dolly;
+    let op = 1;
+    if (zEff > P-260) op = Math.max(0, (P-160-zEff)/100);  /* fly past camera */
+    const f = P / (P - Math.min(zEff, P-170));
+    const bob = Math.sin(t*.001*c.bobSpeed + c.bobPhase) * 7;
+    /* parallax: nearer cards move more, plus gentle tilt toward cursor */
+    const px = (c.cur.x - mx*230*f) * f;
+    const py = (c.cur.y + bob - my*160*f) * f;
+    const s = f * (1 + c.hover*.07);
+    c.el.style.transform =
+      `translate(-50%,-50%) translate(${px}px,${py}px) rotate(${c.cur.r}deg) scale(${s}) ` +
+      `rotateY(${mx*9}deg) rotateX(${-my*6}deg)`;
+    c.el.style.zIndex = Math.round(f*1000) + (c.hovered?2000:0);
+    if (!c.el.classList.contains("dim")) c.el.style.opacity = op;
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ---------------- overlays ---------------- */
+const filmOverlay = document.getElementById("filmOverlay");
+const ovFrame = document.getElementById("ovFrame");
+function openFilm(f){
+  document.getElementById("ovTitle").textContent = f.t;
+  document.getElementById("ovMeta").textContent = f.cat + (f.role ? " · " + f.role : "");
+  document.getElementById("ovInfo").textContent = f.info || "";
+  ovFrame.src = `https://player.vimeo.com/video/${f.vimeo}?autoplay=1&title=0&byline=0&portrait=0`;
+  filmOverlay.classList.add("open");
+}
+document.querySelectorAll(".close").forEach(btn=> btn.addEventListener("click", ()=>{
+  document.getElementById(btn.dataset.close).classList.remove("open");
+  if (btn.dataset.close === "filmOverlay") ovFrame.src = "about:blank";
+}));
+document.getElementById("contactBtn").addEventListener("click", ()=> document.getElementById("contactOverlay").classList.add("open"));
+window.addEventListener("keydown", e=>{ if(e.key==="Escape"){ document.querySelectorAll(".overlay.open").forEach(o=>o.classList.remove("open")); ovFrame.src="about:blank"; }});
+
+/* ---------------- clock ---------------- */
+function setClock(){ document.getElementById("clock").textContent = new Date().toLocaleTimeString("en-GB"); }
+setInterval(setClock, 1000); setClock();
+</script>
+</body>
+</html>

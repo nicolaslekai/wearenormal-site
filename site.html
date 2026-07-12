@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NORMAL — A Creative AI Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#0C0C0D; --fg:#F5F4F0; --muted:#8E8E93; --faint:#5B5B60; --line:#232326;
+    --shadow:0 18px 50px rgba(0,0,0,.55); --shadow-h:0 28px 70px rgba(0,0,0,.8);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--fg);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:#F5F4F0;color:#0C0C0D;}
+  .serif{font-family:"Times New Roman",Times,serif;font-style:italic;font-weight:400;}
+
+  /* ---------- header ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
+    padding:26px 40px;transition:background .5s,border-color .5s,padding .5s;border-bottom:1px solid transparent;}
+  header.stuck{background:rgba(12,12,13,.8);backdrop-filter:blur(14px);border-color:var(--line);padding:16px 40px;}
+  .masthead{font-size:15px;font-weight:700;letter-spacing:.01em;}
+  .masthead .serif{font-size:17px;}
+  nav.top{display:flex;align-items:center;gap:34px;}
+  nav.top a{font-size:13px;color:var(--muted);transition:color .3s;position:relative;}
+  nav.top a::after{content:"";position:absolute;left:0;bottom:-6px;height:1px;width:0;background:var(--fg);transition:width .35s var(--ease);}
+  nav.top a:hover{color:var(--fg);} nav.top a:hover::after{width:100%;}
+  @media(max-width:720px){nav.top{gap:20px;} nav.top a{font-size:12px;}}
+
+  /* ---------- hero ---------- */
+  .hero{height:100vh;min-height:560px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+    padding:0 40px;position:relative;}
+  .wordmark{font-family:"Times New Roman",Times,serif;font-weight:700;font-style:normal;color:var(--fg);
+    font-size:clamp(90px,19vw,300px);line-height:.85;letter-spacing:-.03em;
+    opacity:0;transform:translateY(26px);animation:rise 1.2s var(--ease) .15s forwards;}
+  .hero .sub{margin-top:36px;max-width:460px;font-size:16px;line-height:1.75;color:var(--muted);
+    opacity:0;animation:fade 1s ease .8s forwards;}
+  .hero .sub b{color:var(--fg);font-weight:400;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+  @keyframes fade{to{opacity:1;}}
+  .scrollcue{position:absolute;bottom:30px;left:40px;color:var(--faint);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;opacity:0;animation:fade 1s ease 1.4s forwards;}
+
+  /* ---------- section frame ---------- */
+  section{position:relative;}
+  .lead{padding:14vh 40px 6vh;display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;
+    border-top:1px solid var(--line);margin:0 40px;padding-left:0;padding-right:0;}
+  .lead .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:20px;}
+  .lead h2{font-size:clamp(34px,5.6vw,72px);font-weight:700;line-height:.98;letter-spacing:-.02em;}
+  .lead p{max-width:400px;font-size:14.5px;line-height:1.75;color:var(--muted);}
+
+  /* ---------- reel ---------- */
+  .reelwrap{padding:0 40px;}
+  .reelframe{position:relative;aspect-ratio:16/9;overflow:hidden;background:#000;cursor:pointer;}
+  .reelframe video{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--ease);}
+  .reelframe:hover video{transform:scale(1.015);}
+  .reelframe .pbtn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;
+    background:rgba(12,12,13,.32);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center;transition:.45s var(--ease);}
+  .reelframe:hover .pbtn{background:var(--fg);border-color:var(--fg);transform:translate(-50%,-50%) scale(1.05);}
+  .reelframe .pbtn svg{width:24px;height:24px;margin-left:4px;color:#fff;transition:.45s;}
+  .reelframe:hover .pbtn svg{color:#0C0C0D;}
+  .reelcap{padding:16px 40px 0;display:flex;justify-content:space-between;color:var(--faint);font-size:12px;}
+
+  /* ---------- filters ---------- */
+  .filters{display:flex;gap:28px;padding:0 40px 28px;flex-wrap:wrap;}
+  .filters button{all:unset;cursor:pointer;font-size:13px;color:var(--muted);transition:color .3s;padding-bottom:4px;position:relative;}
+  .filters button::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--fg);transition:width .35s var(--ease);}
+  .filters button:hover{color:var(--fg);}
+  .filters button.active{color:var(--fg);} .filters button.active::after{width:100%;}
+
+  /* ---------- work grid ---------- */
+  .grid{padding:0 34px 6vh;columns:3 340px;column-gap:24px;}
+  @media(max-width:760px){.grid{columns:2 210px;column-gap:16px;padding:0 16px 6vh;}}
+  @media(max-width:460px){.grid{columns:1;}}
+  .tile{break-inside:avoid;margin:0 6px 40px;position:relative;cursor:pointer;
+    opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .tile.in{opacity:1;transform:none;} .tile.hide{display:none;}
+  .media{position:relative;overflow:hidden;background:#141416;}
+  .media img,.media video{display:block;width:100%;height:auto;}
+  .media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;}
+  .tile.playing video{opacity:1;}
+  .media img{transition:transform .9s var(--ease);}
+  .tile:hover .media img{transform:scale(1.04);}
+  .cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 0;}
+  .cap .t{font-size:13px;font-weight:500;letter-spacing:.01em;}
+  .cap .c{font-size:11px;color:var(--faint);white-space:nowrap;}
+  .tile .cap .t{transition:color .3s;}
+  .tile:hover .cap .t{color:var(--fg);}
+
+  /* ---------- meet ---------- */
+  .people{padding:0 40px 6vh;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;border-top:1px solid var(--line);margin:0 40px;padding:0;}
+  .person{padding:44px 0;cursor:pointer;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:14px;transition:padding-left .4s var(--ease);}
+  .person:hover{padding-left:14px;}
+  .person .prole{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+  .person .pname{font-size:clamp(26px,3.4vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1;}
+  .person .pbio{font-size:14px;line-height:1.7;color:var(--muted);max-width:420px;}
+  .person .preel{font-size:12.5px;color:var(--fg);border-bottom:1px solid var(--faint);width:fit-content;padding-bottom:3px;transition:border-color .3s;}
+  .person:hover .preel{border-color:var(--fg);}
+  @media(min-width:800px){.people{grid-template-columns:1fr 1fr;column-gap:60px;}}
+
+  /* ---------- clients line ---------- */
+  .clients{margin:10vh 40px 0;padding:34px 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:18px 44px;align-items:baseline;}
+  .clients span{font-size:13px;color:var(--faint);}
+  .clients span.b{color:var(--muted);}
+
+  /* ---------- footer ---------- */
+  footer{padding:12vh 40px 8vh;}
+  footer h3{font-size:clamp(36px,7vw,92px);font-weight:700;letter-spacing:-.02em;line-height:1;}
+  .frow{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;margin-top:7vh;align-items:flex-end;}
+  .frow a.mail{font-size:clamp(18px,2.6vw,26px);border-bottom:1px solid var(--faint);padding-bottom:5px;transition:border-color .3s;}
+  .frow a.mail:hover{border-color:var(--fg);}
+  .fmeta{font-size:12px;color:var(--faint);text-align:right;line-height:2;}
+
+  /* ---------- overlay ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(8,8,9,.92);z-index:80;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transition:opacity .45s;backdrop-filter:blur(10px);}
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .obar{display:flex;justify-content:space-between;align-items:center;padding:24px 40px;}
+  .obar .t{font-weight:700;font-size:15px;}
+  .obar .m{font-size:11.5px;color:var(--faint);margin-top:5px;}
+  .obar .close{cursor:pointer;font-size:12px;letter-spacing:.1em;padding:8px;}
+  .obar .close:hover{opacity:.6;}
+  .vwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 40px;}
+  .vwrap iframe{width:min(1100px,92vw);aspect-ratio:16/9;border:0;background:#000;box-shadow:var(--shadow);}
+  .oinfo{padding:22px 40px 34px;color:var(--muted);font-size:13px;line-height:1.7;max-width:620px;}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <a class="masthead" href="#top">normal<span class="serif">.</span></a>
+  <nav class="top">
+    <a href="#reel">Reel</a>
+    <a href="#work">Work</a>
+    <a href="#meet">Studio</a>
+    <a href="#connect">Contact</a>
+  </nav>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<div class="hero" id="top">
+  <div class="wordmark">normal.</div>
+  <p class="sub">A creative AI studio. Generative video, live action and CGI for leading brands — <b>made by directors, not prompts.</b></p>
+  <div class="scrollcue">Scroll</div>
+</div>
+
+<!-- ===================== REEL ===================== -->
+<section id="reel">
+  <div class="lead">
+    <div><div class="k">Showreel</div><h2>Directed, <span class="serif">not</span> prompted.</h2></div>
+    <p>Cutting-edge AI combined with decades of award-winning filmmaking.</p>
+  </div>
+  <div class="reelwrap">
+    <div class="reelframe" id="reelFrame">
+      <video id="reelVid" muted loop autoplay playsinline preload="auto"></video>
+      <div class="pbtn"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z" fill="currentColor"/></svg></div>
+    </div>
+  </div>
+  <div class="reelcap"><span>Showreel</span><span>Watch the film</span></div>
+</section>
+
+<!-- ===================== WORK ===================== -->
+<section id="work">
+  <div class="lead">
+    <div><div class="k">Selected work</div><h2>The <span class="serif">work.</span></h2></div>
+    <p>Campaigns, spec films and research — for Rauch, Soho Radio, the Barbican and beyond.</p>
+  </div>
+  <div class="filters" id="filters">
+    <button data-cat="ALL" class="active">All</button>
+    <button data-cat="WORK">Work</button>
+    <button data-cat="PLAY">Play</button>
+  </div>
+  <main class="grid" id="grid"></main>
+</section>
+
+<!-- ===================== MEET ===================== -->
+<section id="meet">
+  <div class="lead" style="border-top:none;padding-top:8vh;">
+    <div><div class="k">The studio</div><h2>Meet <span class="serif">normal.</span></h2></div>
+    <p>A small studio of directors and technical artists. Decades in film, obsessed with what AI makes newly possible.</p>
+  </div>
+  <div class="people" id="people"></div>
+  <div class="clients">
+    <span>Selected clients &amp; collaborators</span>
+    <span class="b">Rauch</span><span class="b">Soho Radio</span><span class="b">Transport for London</span><span class="b">Barbican</span>
+  </div>
+</section>
+
+<!-- ===================== CONNECT ===================== -->
+<footer id="connect">
+  <h3>Let's make something <span class="serif">normal.</span></h3>
+  <div class="frow">
+    <a class="mail" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
+    <div class="fmeta">London · Füssen<br>© 2026 NORMAL</div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="obar"><div><div class="t" id="ovT"></div><div class="m" id="ovM"></div></div><div class="close" id="ovClose">Close ✕</div></div>
+  <div class="vwrap"><iframe id="ovFrame" src="about:blank" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+  <div class="oinfo" id="ovI"></div>
+</div>
+
+<script>
+const A="assets/";
+
+/* ---- reel: rotating background film + click to open brand film ---- */
+(function(){
+  const v=document.getElementById('reelVid');
+  const REELS=["brandfilm.mp4","aether.mp4","mila.mp4","brutalist.mp4"];
+  let ri=0;v.src=A+REELS[0];v.play().catch(()=>{});
+  v.addEventListener('ended',()=>{ri=(ri+1)%REELS.length;v.src=A+REELS[ri];v.play().catch(()=>{});});
+  document.getElementById('reelFrame').addEventListener('click',()=>openFilm(FILMS.find(f=>f.img==='brandfilm.jpg')));
+})();
+
+/* ---- films ---- */
+const FILMS=[
+  {t:"Cafe Mio — Mila",cat:"WORK",img:"mila.jpg",vid:"mila.mp4",vimeo:"1207013277",info:"Rauch launch campaign in 8 countries. 36 versions: 15s, 10s and 6s in 16:9, 1:1, 5:4 and 9:16."},
+  {t:"Cafe Mio — Luka",cat:"WORK",img:"luka.jpg",vid:"luka.mp4",vimeo:"1207013485",info:"Rauch launch campaign in 8 countries."},
+  {t:"Æther Vodka",cat:"PLAY",img:"aether.jpg",vid:"aether.mp4",vimeo:"1207014566",info:"Spec ad. AI visuals and AI music exploration."},
+  {t:"Christmas Pyramid",cat:"WORK",img:"pyramid.jpg",vid:"pyramid.mp4",vimeo:"1207012840",info:"Cinema ad for a charity giving presents to children at Christmas."},
+  {t:"EisLimo",cat:"WORK",img:"eislimo.jpg",vid:"eislimo.mp4",vimeo:"1207341451",info:"Rauch drink campaign."},
+  {t:"Karminsky Grid",cat:"WORK",img:"kgrid.jpg",vid:"kgrid.mp4",vimeo:"1207010814",info:"A grid of nine films — monthly social ads for a 60s & 70s show on Soho Radio."},
+  {t:"A Brutalist Sculpture Show",cat:"PLAY",img:"brutalist.jpg",vid:"brutalist.mp4",vimeo:"1207013727",info:"Barbican locations meet AI sculptures. 9:16 research project."},
+  {t:"Vélant Diving Watch",cat:"PLAY",img:"velant.jpg",vid:"velant.mp4",vimeo:"1207009432",info:"Created with AI in 2024 for a CGI film of Munich Airport."},
+  {t:"Gloss Theory",cat:"PLAY",img:"gloss.jpg",vid:"gloss.mp4",vimeo:"1207015256",info:"Hair ad test."},
+  {t:"Normal Brand Film",cat:"WORK",img:"brandfilm.jpg",vid:"brandfilm.mp4",vimeo:"1207010072",info:"We combine AI with decades of experience in live action and CGI filmmaking for leading brands."},
+  {t:"Karminsky 03-26",cat:"WORK",img:"karminsky0326.jpg",vimeo:"1207019215",info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"Karminsky 11-25",cat:"WORK",img:"karminsky1125.jpg",vimeo:"1207017610",info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"Aaargh Zombies — 1",cat:"PLAY",img:"zombie1.jpg",vimeo:"973145090",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+  {t:"Aaargh Zombies — 2",cat:"PLAY",img:"zombie2.jpg",vimeo:"973142569",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+  {t:"Aaargh Zombies — 3",cat:"PLAY",img:"zombie3.jpg",vimeo:"973140911",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+];
+const PEOPLE=[
+  {name:"Guy Nisbett",role:"Creative Director",vimeo:"1104124501",bio:"Multi-award-winning creative, live action and CGI director. Post and generative AI specialist."},
+  {name:"Nicolas Lekai",role:"Technical Director",vimeo:"1104124478",bio:"CGI, Houdini, Nuke and ComfyUI artist. AI consultant, music composer and producer."},
+];
+
+/* ---- work grid ---- */
+const grid=document.getElementById('grid');
+FILMS.forEach(f=>{
+  const tile=document.createElement('article');
+  tile.className='tile';tile.dataset.cat=f.cat;
+  tile.innerHTML=`<div class="media">
+      <img src="${A+f.img}" alt="${f.t}" loading="lazy" draggable="false">
+      ${f.vid?`<video src="${A+f.vid}" muted loop playsinline preload="none"></video>`:""}
+    </div>
+    <div class="cap"><span class="t">${f.t}</span><span class="c">${f.cat==='WORK'?'Commission':'Studio project'}</span></div>`;
+  tile.addEventListener('mouseenter',()=>{const v=tile.querySelector('video');if(v){tile.classList.add('playing');v.currentTime=0;v.play().catch(()=>{});}});
+  tile.addEventListener('mouseleave',()=>{const v=tile.querySelector('video');if(v){tile.classList.remove('playing');v.pause();}});
+  tile.addEventListener('click',()=>openFilm(f));
+  grid.appendChild(tile);f._el=tile;
+});
+
+/* ---- people ---- */
+const people=document.getElementById('people');
+PEOPLE.forEach(p=>{
+  const el=document.createElement('div');el.className='person';
+  el.innerHTML=`<div class="prole">${p.role}</div>
+    <div class="pname">${p.name}</div>
+    <div class="pbio">${p.bio}</div>
+    <div class="preel">Watch showreel</div>`;
+  el.addEventListener('click',()=>openFilm({t:p.name,cat:p.role,vimeo:p.vimeo,info:p.bio}));
+  people.appendChild(el);
+});
+
+/* ---- scroll reveal ---- */
+const io=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*45);io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.tile').forEach(t=>io.observe(t));
+
+/* ---- filters ---- */
+let cat='ALL';
+document.querySelectorAll('#filters button').forEach(b=>b.addEventListener('click',()=>{
+  cat=b.dataset.cat;
+  document.querySelectorAll('#filters button').forEach(x=>x.classList.toggle('active',x===b));
+  FILMS.forEach(f=>{const show=(cat==='ALL'||f.cat===cat);f._el.classList.toggle('hide',!show);
+    if(show&&!f._el.classList.contains('in'))f._el.classList.add('in');});
+}));
+
+/* ---- overlay ---- */
+const ov=document.getElementById('overlay'),ovFrame=document.getElementById('ovFrame');
+function openFilm(f){document.getElementById('ovT').textContent=f.t;document.getElementById('ovM').textContent=f.cat||'';
+  document.getElementById('ovI').textContent=f.info||'';if(f.vimeo)ovFrame.src=`https://player.vimeo.com/video/${f.vimeo}?autoplay=1&title=0&byline=0&portrait=0`;
+  ov.classList.add('open');document.body.style.overflow='hidden';}
+function closeOv(){ov.classList.remove('open');ovFrame.src='about:blank';document.body.style.overflow='';}
+document.getElementById('ovClose').addEventListener('click',closeOv);
+ov.addEventListener('click',e=>{if(e.target===ov)closeOv();});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
+
+/* ---- header stuck ---- */
+addEventListener('scroll',()=>{document.getElementById('hdr').classList.toggle('stuck',scrollY>60);});
+</script>
+</body>
+</html>

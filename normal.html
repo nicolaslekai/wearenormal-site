@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NORMAL — A Creative AI Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#F1EEE6; --fg:#1C1F21; --muted:#8a857a; --line:#e0dccf;
+    --tile:#ffffff; --shadow:0 12px 34px rgba(28,31,33,.10); --shadow-h:0 22px 60px rgba(28,31,33,.18);
+    --accent:#1C1F21; --grain:0;
+  }
+  body[data-theme="new"]{
+    --bg:#0b0c0e; --fg:#ECE7DA; --muted:#7d7a86; --line:#20222a;
+    --tile:#121319; --shadow:0 14px 40px rgba(0,0,0,.5); --shadow-h:0 20px 60px rgba(0,0,0,.7);
+    --accent:#0bed90; --grain:.04;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--fg);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;transition:background .6s ease,color .6s ease;overflow-x:hidden;}
+  .mono{font-family:"SF Mono",Menlo,Consolas,monospace;letter-spacing:.2em;text-transform:uppercase;}
+  a{color:inherit;}
+
+  .grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:var(--grain);transition:opacity .6s;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:gm 1s steps(2) infinite;mix-blend-mode:overlay;}
+  @keyframes gm{0%{transform:translate(0,0)}50%{transform:translate(-3%,2%)}100%{transform:translate(2%,-2%)}}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 86%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:background .6s,border-color .6s;}
+  .hrow{display:flex;justify-content:space-between;align-items:center;padding:20px 32px;}
+  .masthead{display:flex;align-items:baseline;gap:14px;}
+  .masthead h1{font-size:16px;font-weight:700;letter-spacing:.02em;}
+  .masthead .tag{font-family:"SF Mono",Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+  .tools{display:flex;align-items:center;gap:20px;}
+  .chip{background:var(--fg);color:var(--bg);font-family:"Times New Roman",Times,serif;font-weight:700;font-size:19px;padding:6px 14px;transition:background .6s,color .6s;}
+  /* toggle */
+  .modesw{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+  .modesw .lbl{font-family:"SF Mono",Menlo,monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .4s;white-space:nowrap;}
+  .modesw .lbl.on{color:var(--fg);}
+  .track{width:44px;height:22px;border:1px solid var(--muted);border-radius:20px;position:relative;transition:border-color .4s;}
+  .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--fg);transition:left .4s cubic-bezier(.22,1,.36,1),background .4s;}
+  body[data-theme="new"] .knob{left:24px;background:var(--accent);}
+  body[data-theme="new"] .track{border-color:var(--accent);}
+  /* filters */
+  .filters{display:flex;gap:26px;padding:0 32px 16px;flex-wrap:wrap;}
+  .filters button{all:unset;cursor:pointer;font-family:"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);transition:color .3s;display:flex;gap:8px;align-items:baseline;}
+  .filters button .idx{font-size:9px;opacity:.5;}
+  .filters button:hover,.filters button.active{color:var(--fg);}
+  .filters button.active .bar{display:inline-block;width:18px;height:1px;background:var(--accent);margin-left:4px;vertical-align:middle;}
+
+  /* ---------- full-bleed reel hero ---------- */
+  .reel{position:relative;height:100vh;min-height:580px;overflow:hidden;display:flex;align-items:flex-end;}
+  .reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:saturate(1.05);}
+  .reel .scrim{position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.05) 30%,transparent 52%,color-mix(in srgb,var(--bg) 94%,transparent) 100%);}
+  body[data-theme="new"] .reel .scrim{background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.12) 34%,rgba(4,5,7,.6) 80%,var(--bg) 100%);}
+  .reel .rin{position:relative;z-index:2;padding:0 32px 8vh;width:100%;color:#fff;}
+  .reel h1{font-size:clamp(44px,9.6vw,158px);font-weight:700;line-height:.9;letter-spacing:-.02em;text-transform:uppercase;}
+  .reel h1 .serif{font-family:"Times New Roman",Times,serif;font-style:italic;font-weight:400;text-transform:none;}
+  .reel .word{display:inline-block;overflow:hidden;vertical-align:top;}
+  .reel .word i{display:inline-block;font-style:inherit;transform:translateY(112%);opacity:0;animation:rise 1s cubic-bezier(.22,1,.36,1) forwards;}
+  @keyframes rise{to{transform:none;opacity:1;}}
+  .reel .sub{margin-top:22px;max-width:540px;font-size:15px;line-height:1.7;color:rgba(255,255,255,.78);opacity:0;animation:fadein 1s ease 1.1s forwards;}
+  @keyframes fadein{to{opacity:1;}}
+  .reel .scrollcue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:2;color:rgba(255,255,255,.72);
+    font-family:"SF Mono",monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;animation:bobc 2s ease-in-out infinite;}
+  @keyframes bobc{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+  /* ---------- marquee ticker ---------- */
+  .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:15px 0;transition:border-color .6s;}
+  .ticker:hover .run{animation-play-state:paused;}
+  .run{display:inline-block;animation:marq 30s linear infinite;}
+  .run span{font-family:"SF Mono",monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 24px;}
+  .run span b{color:var(--fg);font-weight:400;}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- new-normal identity: scanlines, blink, glitch ---------- */
+  .scan{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .6s;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);mix-blend-mode:multiply;}
+  body[data-theme="new"] .scan{opacity:.55;}
+  .blink{color:var(--accent);opacity:0;}
+  body[data-theme="new"] .blink{animation:bl 1.1s steps(1) infinite;}
+  @keyframes bl{0%,55%{opacity:1}56%,100%{opacity:0}}
+
+  /* ---------- grid (masonry) ---------- */
+  .grid{padding:0 24px 8vh;columns:4 300px;column-gap:20px;}
+  @media(max-width:1100px){.grid{columns:3 280px;}}
+  @media(max-width:760px){.grid{columns:2 200px;column-gap:14px;padding:0 14px 8vh;}}
+  @media(max-width:460px){.grid{columns:1;}}
+  .tile{break-inside:avoid;margin:0 0 20px;position:relative;cursor:pointer;
+    opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+  .tile.in{opacity:1;transform:none;}
+  .tile.hide{display:none;}
+  .media{position:relative;overflow:hidden;background:var(--tile);box-shadow:var(--shadow);transition:box-shadow .5s,transform .5s;border:1px solid transparent;}
+  body[data-theme="new"] .media{border-color:var(--line);}
+  .tile:hover .media{box-shadow:var(--shadow-h);transform:translateY(-4px);}
+  .media img,.media video{display:block;width:100%;height:auto;}
+  .media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;}
+  .tile.playing video{opacity:1;}
+  .cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 3px 2px;}
+  .cap .t{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .cap .c{font-family:"SF Mono",Menlo,monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+  .cap .t::after{content:"";display:block;height:1px;background:var(--accent);width:0;transition:width .4s cubic-bezier(.22,1,.36,1);margin-top:5px;}
+  .tile:hover .cap .t::after{width:26px;}
+  .media img{transition:transform .6s cubic-bezier(.22,1,.36,1);}
+  .tile:hover .media img{transform:scale(1.06);}
+  body[data-theme="new"] .tile:hover .cap .t{text-shadow:1.5px 0 #d600ff,-1.5px 0 #0bed90;animation:glitch .32s steps(2) 1;}
+  @keyframes glitch{0%{transform:translateX(0)}25%{transform:translateX(-2px)}50%{transform:translateX(2px)}100%{transform:translateX(0)}}
+  .play{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.8);
+    display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;transform:scale(.85);transition:.4s;mix-blend-mode:difference;}
+  .tile:hover .play{opacity:1;transform:scale(1);}
+  .play svg{width:11px;height:11px;margin-left:2px;}
+  /* about/person tile */
+  .tile.person .media{background:var(--fg);color:var(--bg);aspect-ratio:1;padding:22px;display:flex;flex-direction:column;justify-content:space-between;border:none;}
+  .tile.person .pname{font-size:22px;font-weight:700;line-height:1.05;}
+  .tile.person .prole{font-family:"SF Mono",Menlo,monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+  .tile.person .pbio{font-size:12px;line-height:1.6;color:color-mix(in srgb,var(--bg) 72%,var(--fg));}
+
+  /* ---------- footer / contact ---------- */
+  footer{border-top:1px solid var(--line);padding:8vh 32px 6vh;transition:border-color .6s;}
+  footer h3{font-size:clamp(30px,6vw,74px);font-weight:700;letter-spacing:-.01em;line-height:1;}
+  footer h3 .serif{font-family:"Times New Roman",Times,serif;font-style:italic;font-weight:400;}
+  .frow{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;margin-top:6vh;align-items:flex-end;}
+  .frow a.mail{font-size:20px;text-decoration:none;border-bottom:1px solid var(--muted);padding-bottom:4px;}
+  .frow a.mail:hover{border-color:var(--fg);}
+  .fmeta{font-family:"SF Mono",Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:right;line-height:1.8;}
+
+  /* ---------- film overlay ---------- */
+  .overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 30%, #000 82%);z-index:60;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transition:opacity .45s;backdrop-filter:blur(6px);}
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .obar{display:flex;justify-content:space-between;align-items:center;padding:22px 32px;color:#fff;}
+  .obar .t{font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;}
+  .obar .m{font-family:"SF Mono",Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#9a958a;margin-top:5px;}
+  .obar .close{cursor:pointer;font-family:"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.2em;color:#fff;padding:8px;}
+  .obar .close:hover{opacity:.6;}
+  .vwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0 32px;}
+  .vwrap iframe{width:min(1100px,92vw);aspect-ratio:16/9;border:0;background:#000;box-shadow:0 30px 90px rgba(0,0,0,.6);}
+  .oinfo{padding:20px 32px 30px;color:#9a958a;font-size:12.5px;line-height:1.7;max-width:640px;}
+</style>
+</head>
+<body data-theme="new">
+<div class="grain"></div>
+<div class="scan"></div>
+
+<header>
+  <div class="hrow">
+    <div class="masthead"><h1>NORMAL<span class="blink">_</span></h1><span class="tag">A Creative AI Studio</span></div>
+    <div class="tools">
+      <div class="modesw" id="modesw" title="we are the new normal">
+        <span class="lbl" id="lblN">NORMAL</span>
+        <div class="track"><div class="knob"></div></div>
+        <span class="lbl on" id="lblNew">NEW&nbsp;NORMAL</span>
+      </div>
+      <div class="chip">normal.</div>
+    </div>
+  </div>
+  <div class="filters" id="filters">
+    <button data-cat="ALL" class="active"><span class="idx">00</span>ALL<span class="bar"></span></button>
+    <button data-cat="WORK"><span class="idx">01</span>WORK<span class="bar"></span></button>
+    <button data-cat="PLAY"><span class="idx">02</span>PLAY<span class="bar"></span></button>
+    <button data-cat="ABOUT"><span class="idx">03</span>ABOUT<span class="bar"></span></button>
+  </div>
+</header>
+
+<section class="reel">
+  <video id="reelVid" muted loop autoplay playsinline preload="auto"></video>
+  <div class="scrim"></div>
+  <div class="rin">
+    <h1 id="reelH"></h1>
+    <div class="sub">Cutting-edge AI × award-winning, human filmmaking. Generative video, live action &amp; CGI for leading brands — made by directors, not prompts.</div>
+  </div>
+  <div class="scrollcue">Scroll ↓</div>
+</section>
+
+<div class="ticker"><div class="run" id="tickRun"></div></div>
+
+<main class="grid" id="grid"></main>
+
+<footer>
+  <h3>Let's make something <span class="serif">normal.</span></h3>
+  <div class="frow">
+    <a class="mail" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
+    <div class="fmeta">London · Everywhere<br>© 2026 NORMAL</div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="obar"><div><div class="t" id="ovT"></div><div class="m" id="ovM"></div></div><div class="close" id="ovClose">CLOSE&nbsp;✕</div></div>
+  <div class="vwrap"><iframe id="ovFrame" src="about:blank" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+  <div class="oinfo" id="ovI"></div>
+</div>
+
+<script>
+const A="assets/";
+
+/* ---- reel hero: kinetic tagline + background film ---- */
+(function(){
+  const words=["WE","ARE","THE","<i class='serif'>new</i>","NORMAL."];
+  const h=document.getElementById('reelH');
+  h.innerHTML=words.map((w,i)=>`<span class="word"><i style="animation-delay:${0.15+i*0.11}s">${w}</i></span>`).join(' ');
+  const v=document.getElementById('reelVid');
+  // rotate the background reel through a few of the moodiest films
+  const REELS=["aether.mp4","brandfilm.mp4","mila.mp4","brutalist.mp4"];
+  let ri=0; v.src=A+REELS[0];
+  v.addEventListener('ended',()=>{ri=(ri+1)%REELS.length;v.src=A+REELS[ri];v.play().catch(()=>{});});
+  v.play().catch(()=>{});
+})();
+
+/* ---- ticker ---- */
+(function(){
+  const items=["Generative AI","LoRA Training","ComfyUI","Creative Direction","Live Action","Drones","Motion Capture","CGI & Houdini","Nuke Compositing","DaVinci Grade","Music & Sound","<b>Rauch</b>","<b>Soho Radio</b>","<b>Transport for London</b>","<b>Barbican</b>"];
+  const one=items.map(x=>`<span>${x}</span><span>·</span>`).join('');
+  document.getElementById('tickRun').innerHTML=one+one;
+})();
+const FILMS=[
+  {t:"CAFE MIO — MILA",cat:"WORK",img:"mila.jpg",vid:"mila.mp4",vimeo:"1207013277",info:"Rauch launch campaign in 8 countries. 36 versions: 15s, 10s and 6s in 16:9, 1:1, 5:4 and 9:16."},
+  {t:"CAFEMIO — LUKA",cat:"WORK",img:"luka.jpg",vid:"luka.mp4",vimeo:"1207013485",info:"Rauch launch campaign in 8 countries."},
+  {t:"ÆTHER VODKA",cat:"PLAY",img:"aether.jpg",vid:"aether.mp4",vimeo:"1207014566",info:"Spec ad. AI visuals and AI music exploration."},
+  {t:"CHRISTMAS PYRAMID",cat:"WORK",img:"pyramid.jpg",vid:"pyramid.mp4",vimeo:"1207012840",info:"Cinema ad for a charity giving presents to children at Christmas."},
+  {t:"EISLIMO",cat:"WORK",img:"eislimo.jpg",vid:"eislimo.mp4",vimeo:"1207341451",info:"Rauch drink campaign."},
+  {t:"KARMINSKY GRID",cat:"WORK",img:"kgrid.jpg",vid:"kgrid.mp4",vimeo:"1207010814",info:"A grid of nine films — monthly social ads for a 60s & 70s show on Soho Radio."},
+  {t:"A BRUTALIST SCULPTURE SHOW",cat:"PLAY",img:"brutalist.jpg",vid:"brutalist.mp4",vimeo:"1207013727",info:"Barbican locations meet AI sculptures. 9:16 research project."},
+  {t:"VÉLANT DIVING WATCH",cat:"PLAY",img:"velant.jpg",vid:"velant.mp4",vimeo:"1207009432",info:"Created with AI in 2024 for a CGI film of Munich Airport."},
+  {t:"GLOSS THEORY",cat:"PLAY",img:"gloss.jpg",vid:"gloss.mp4",vimeo:"1207015256",info:"Hair ad test."},
+  {t:"NORMAL BRAND FILM",cat:"ABOUT",img:"brandfilm.jpg",vid:"brandfilm.mp4",vimeo:"1207010072",info:"We combine AI with decades of experience in live action and CGI filmmaking for leading brands."},
+  {t:"KARMINSKY 03-26",cat:"WORK",img:"karminsky0326.jpg",vimeo:"1207019215",info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"KARMINSKY 11-25",cat:"WORK",img:"karminsky1125.jpg",vimeo:"1207017610",info:"From a series of monthly social ads for The Karminsky Experience on Soho Radio."},
+  {t:"AAARGH ZOMBIES — 1",cat:"PLAY",img:"zombie1.jpg",vimeo:"973145090",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+  {t:"AAARGH ZOMBIES — 2",cat:"PLAY",img:"zombie2.jpg",vimeo:"973142569",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+  {t:"AAARGH ZOMBIES — 3",cat:"PLAY",img:"zombie3.jpg",vimeo:"973140911",info:"Public information campaign on the 'smartphone zombie' phenomenon."},
+  {t:"GUY NISBETT",role:"CREATIVE DIRECTOR",cat:"ABOUT",person:true,vimeo:"1104124501",info:"Multi-award-winning creative, live action and CGI director. Post and generative AI specialist."},
+  {t:"NICOLAS LEKAI",role:"TECHNICAL DIRECTOR",cat:"ABOUT",person:true,vimeo:"1104124478",info:"CGI, Houdini, Nuke and ComfyUI artist. AI consultant, music composer and producer."},
+];
+
+const grid=document.getElementById('grid');
+FILMS.forEach(f=>{
+  const tile=document.createElement('article');
+  tile.className='tile'+(f.person?' person':'');
+  tile.dataset.cat=f.cat;
+  if(f.person){
+    tile.innerHTML=`<div class="media"><div class="prole">${f.role}</div>
+      <div><div class="pname">${f.t}</div><div class="pbio">${f.info}</div></div>
+      <div class="prole">SHOWREEL ↗</div></div>`;
+  } else {
+    tile.innerHTML=`<div class="media">
+        <img src="${A+f.img}" alt="${f.t}" loading="lazy" draggable="false">
+        ${f.vid?`<video src="${A+f.vid}" muted loop playsinline preload="none"></video>`:""}
+        <div class="play"><svg viewBox="0 0 10 10"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></svg></div>
+      </div>
+      <div class="cap"><span class="t">${f.t}</span><span class="c">${f.cat}</span></div>`;
+  }
+  tile.addEventListener('mouseenter',()=>{const v=tile.querySelector('video');if(v){tile.classList.add('playing');v.currentTime=0;v.play().catch(()=>{});}});
+  tile.addEventListener('mouseleave',()=>{const v=tile.querySelector('video');if(v){tile.classList.remove('playing');v.pause();}});
+  tile.addEventListener('click',()=>openFilm(f));
+  grid.appendChild(tile);
+  f._el=tile;
+});
+
+/* scroll reveal (tasteful stagger) */
+const io=new IntersectionObserver((es)=>{es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*45);io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.tile').forEach(t=>io.observe(t));
+
+/* filters */
+let cat='ALL';
+document.querySelectorAll('#filters button').forEach(b=>b.addEventListener('click',()=>{
+  cat=b.dataset.cat;
+  document.querySelectorAll('#filters button').forEach(x=>x.classList.toggle('active',x===b));
+  FILMS.forEach(f=>{const show=(cat==='ALL'||f.cat===cat);f._el.classList.toggle('hide',!show);
+    if(show&&!f._el.classList.contains('in'))f._el.classList.add('in');});
+  window.scrollTo({top:document.querySelector('.grid').offsetTop-120,behavior:'smooth'});
+}));
+
+/* overlay */
+const ov=document.getElementById('overlay'),ovFrame=document.getElementById('ovFrame');
+function openFilm(f){document.getElementById('ovT').textContent=f.t;document.getElementById('ovM').textContent=f.cat+(f.role?' · '+f.role:'');
+  document.getElementById('ovI').textContent=f.info||'';if(f.vimeo)ovFrame.src=`https://player.vimeo.com/video/${f.vimeo}?autoplay=1&title=0&byline=0&portrait=0`;
+  ov.classList.add('open');document.body.style.overflow='hidden';}
+function closeOv(){ov.classList.remove('open');ovFrame.src='about:blank';document.body.style.overflow='';}
+document.getElementById('ovClose').addEventListener('click',closeOv);
+ov.addEventListener('click',e=>{if(e.target===ov)closeOv();});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
+
+/* mode toggle */
+const lblN=document.getElementById('lblN'),lblNew=document.getElementById('lblNew');
+function setMode(isNew){document.body.dataset.theme=isNew?'new':'normal';lblN.classList.toggle('on',!isNew);lblNew.classList.toggle('on',isNew);}
+document.getElementById('modesw').addEventListener('click',()=>setMode(document.body.dataset.theme!=='new'));
+
+/* deep links from the water home page: /normal.html#about -> MEET (about filter) */
+if(location.hash==='#about'){const b=document.querySelector('#filters button[data-cat="ABOUT"]');if(b)b.click();}
+</script>
+</body>
+</html>
