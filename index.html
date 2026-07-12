@@ -76,6 +76,7 @@
   .stream{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--bg);}
   @media(max-width:700px){.stream{grid-template-columns:1fr;}}
   .film{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;cursor:pointer;}
+  .film:last-child:nth-child(odd){grid-column:1/-1;}
   .film video{width:100%;height:100%;object-fit:cover;display:block;}
   .film .fcap{position:absolute;left:22px;bottom:18px;z-index:2;color:#fff;display:flex;align-items:baseline;gap:11px;
     text-shadow:0 2px 14px rgba(0,0,0,.7);opacity:.92;}
@@ -189,7 +190,6 @@ const A="assets/";
 
 /* ---------- films: one continuous stream ---------- */
 const FILMS=[
-  {t:"Normal Brand Film",c:"Brand",vid:"brandfilm.mp4",img:"brandfilm.jpg",vimeo:"1207010072",info:"We combine AI with decades of experience in live action and CGI filmmaking for leading brands."},
   {t:"Cafe Mio — Mila",c:"Commission · Rauch",vid:"mila.mp4",img:"mila.jpg",vimeo:"1207013277",info:"Rauch launch campaign in 8 countries. 36 versions: 15s, 10s and 6s in 16:9, 1:1, 5:4 and 9:16."},
   {t:"Æther Vodka",c:"Studio project",vid:"aether.mp4",img:"aether.jpg",vimeo:"1207014566",info:"Spec ad. AI visuals and AI music exploration."},
   {t:"EisLimo",c:"Commission · Rauch",vid:"eislimo.mp4",img:"eislimo.jpg",vimeo:"1207341451",info:"Rauch drink campaign."},
