@@ -1,0 +1,286 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>normal. — the karminsky experience</title>
+<style>
+  @font-face {
+    font-family: 'Archivo Narrow';
+    font-style: normal;
+    font-weight: 600;
+    src: url(about-assets/archivo-narrow-600.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/nunito-400.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/jetbrains-mono-400.woff2) format('woff2');
+  }
+  :root {
+    --ink-bg: #1c1f21;
+    --ink-2: #23272a;
+    --paper: #f4f1ea;
+    --paper-dim: #c7c4bc;
+    --mute: #8e9497;
+    --rule: rgba(244, 241, 234, 0.13);
+    --stone: #c9b49a;
+    --hover: #c0562f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --narrow: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --times: 'Times New Roman', Times, serif;
+    --sq: min(56vh, 38vw);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink-bg);
+    color: var(--paper);
+    font-family: var(--body);
+    min-height: 100vh;
+  }
+  .mono {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  header {
+    padding: 30px 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .wm {
+    font: 700 25px var(--times);
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .back {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--paper-dim);
+    text-decoration: none;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--hover); }
+  main { max-width: 1180px; margin: 0 auto; padding: 4px 90px 70px; }
+  h1 {
+    font: 600 clamp(24px, 3vw, 38px) var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+  }
+  .meta { margin-top: 10px; color: var(--stone); font-size: 10px; }
+
+  .row { display: flex; gap: 26px; margin-top: 30px; align-items: flex-start; }
+  .player {
+    position: relative;
+    width: var(--sq);
+    height: var(--sq);
+    flex-shrink: 0;
+    background: var(--ink-2);
+    overflow: hidden;
+  }
+  .player iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+  }
+  .player iframe.on { opacity: 1; }
+  .bigplay {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: none;
+    color: var(--paper);
+    font: 400 54px var(--mono);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: rgba(28, 31, 33, 0.35);
+  }
+  .bigplay.show { display: flex; }
+  .player .poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .player .cue {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    z-index: 5;
+    font: 400 10px var(--mono);
+    letter-spacing: 0.2em;
+    color: var(--paper);
+    background: rgba(28, 31, 33, 0.72);
+    padding: 5px 10px;
+  }
+  .sleeves {
+    width: var(--sq);
+    height: var(--sq);
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .sleeves button {
+    all: unset;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .sleeves button:focus-visible { outline: 2px solid var(--stone); outline-offset: 2px; }
+  .sleeves img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s;
+  }
+  .sleeves button:hover img { transform: scale(1.05); }
+  .sleeves button.on::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--stone);
+  }
+  .sleeves button .lbl {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 5px 8px;
+    font: 400 8px var(--mono);
+    letter-spacing: 0.18em;
+    color: var(--paper);
+    background: linear-gradient(transparent, rgba(28, 31, 33, 0.85));
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-transform: uppercase;
+  }
+  .sleeves button:hover .lbl, .sleeves button.on .lbl { opacity: 1; }
+
+  .text { margin-top: 34px; max-width: 640px; }
+  .text p {
+    font: 400 16px/1.75 var(--body);
+    color: var(--paper-dim);
+    margin-bottom: 12px;
+  }
+  .text a { color: var(--paper); transition: color 0.2s ease; }
+  .text a:hover { color: var(--hover); }
+  @media (max-width: 820px) {
+    header { padding: 22px 24px; }
+    main { padding: 4px 24px 60px; }
+    .row { flex-direction: column; }
+    .player, .sleeves { width: min(86vw, 86vh); height: min(86vw, 86vh); }
+  }
+</style>
+
+<header>
+  <a class="wm" href="index.html">normal.</a>
+  <a class="back" href="index.html#work">BACK TO WORK</a>
+</header>
+<main>
+  <h1>The Karminsky Experience</h1>
+  <div class="meta mono">WORK · NINE FILMS · NINE SOUNDTRACKS · SOHO RADIO</div>
+
+  <div class="row">
+    <div class="player" id="player">
+      <img class="poster" id="poster" src="about-assets/cs/karminsky/km1.jpg" alt="">
+      <button class="bigplay" id="bigplay">&#9654;</button>
+      <div class="cue" id="cue">CLICK A SLEEVE TO PLAY</div>
+    </div>
+    <div class="sleeves" id="sleeves"></div>
+  </div>
+
+  <div class="text">
+    <p>To promote shows by the Karminsky Experience on Soho Radio, NORMAL used AI to bring these rare 60s and 70s record sleeves to life.</p>
+    <p>You can find the radio show, along with many more from The Karminsky Experience, on <a href="https://www.mixcloud.com/search/?q=%22The%20Karminsky%20Experience%22" target="_blank" rel="noopener">Mixcloud</a>.</p>
+  </div>
+</main>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+const SHOWS = [
+  { t: 'KARMINSKY 10-25', vimeo: '1207012589', img: 'about-assets/cs/karminsky/km1.jpg' },
+  { t: 'KARMINSKY 11-25', vimeo: '1207017610', img: 'about-assets/cs/karminsky/km2.jpg' },
+  { t: 'KARMINSKY 12-25', vimeo: '1207018058', img: 'about-assets/cs/karminsky/km3.jpg' },
+  { t: 'KARMINSKY 01-26', vimeo: '1207018705', img: 'about-assets/cs/karminsky/km4.jpg' },
+  { t: 'KARMINSKY 02-26', vimeo: '1207018997', img: 'about-assets/cs/karminsky/km5.jpg' },
+  { t: 'KARMINSKY 03-26', vimeo: '1207019215', img: 'about-assets/cs/karminsky/km6.jpg' },
+  { t: 'KARMINSKY 04-26', vimeo: '1207019448', img: 'about-assets/cs/karminsky/km7.jpg' },
+  { t: 'KARMINSKY 05-26', vimeo: '1207019784', img: 'about-assets/cs/karminsky/km8.jpg' },
+  { t: 'KARMINSKY 06-26', vimeo: '1207019959', img: 'about-assets/cs/karminsky/km9.jpg' },
+];
+const playerBox = document.getElementById('player');
+const poster = document.getElementById('poster');
+const cue = document.getElementById('cue');
+const bigplay = document.getElementById('bigplay');
+const sleeves = document.getElementById('sleeves');
+const frames = [], players = [];
+let current = -1;
+
+/* pre-create all nine players, muted + paused, so a later tap can
+   command play() synchronously — the pattern iOS accepts */
+SHOWS.forEach((show, i) => {
+  const ifr = document.createElement('iframe');
+  ifr.src = `https://player.vimeo.com/video/${show.vimeo}?controls=0&loop=1&muted=1&playsinline=1&autoplay=0&title=0&byline=0&portrait=0&dnt=1`;
+  ifr.allow = 'autoplay; fullscreen';
+  playerBox.insertBefore(ifr, cue);
+  frames.push(ifr);
+  players.push(new Vimeo.Player(ifr));
+});
+
+function select(i) {
+  const p = players[i];
+  poster.style.display = 'none';
+  bigplay.classList.remove('show');
+  frames.forEach((f, j) => f.classList.toggle('on', j === i));
+  players.forEach((q, j) => { if (j !== i) q.pause().catch(() => {}); });
+  current = i;
+  cue.textContent = SHOWS[i].t;
+  /* synchronous, inside the user's tap: unmute + play */
+  p.setMuted(false).catch(() => {});
+  p.setVolume(1).catch(() => {});
+  p.play().catch(() => {
+    /* iOS refused — show the big play glyph; a direct second tap always succeeds */
+    bigplay.classList.add('show');
+  });
+}
+
+bigplay.addEventListener('click', () => {
+  if (current < 0) return;
+  bigplay.classList.remove('show');
+  const p = players[current];
+  p.setMuted(false).catch(() => {});
+  p.play().catch(() => {});
+});
+
+SHOWS.forEach((show, i) => {
+  const b = document.createElement('button');
+  b.innerHTML = `<img src="${show.img}" alt="${show.t}"><span class="lbl">${show.t}</span>`;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.sleeves button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    select(i);
+  });
+  sleeves.appendChild(b);
+});
+</script>

@@ -1,0 +1,263 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>normal. — a brutalist sculpture show</title>
+<style>
+  @font-face {
+    font-family: 'Archivo Narrow';
+    font-style: normal;
+    font-weight: 600;
+    src: url(about-assets/archivo-narrow-600.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/nunito-400.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/jetbrains-mono-400.woff2) format('woff2');
+  }
+  :root {
+    --ink-bg: #1c1f21;
+    --ink-2: #23272a;
+    --paper: #f4f1ea;
+    --paper-dim: #c7c4bc;
+    --mute: #8e9497;
+    --rule: rgba(244, 241, 234, 0.13);
+    --stone: #c9b49a;
+    --hover: #c0562f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --narrow: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --times: 'Times New Roman', Times, serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--ink-bg);
+    color: var(--paper);
+    font-family: var(--body);
+    display: flex;
+    flex-direction: column;
+  }
+  .mono {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  header {
+    padding: 30px 90px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-shrink: 0;
+  }
+  .wm {
+    font: 700 25px var(--times);
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .back {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--paper-dim);
+    text-decoration: none;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--hover); }
+
+  /* ---------- art book spread ---------- */
+  .book {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    gap: 5vw;
+    padding: 3.5vh 90px 4.5vh;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .cinema {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 9 / 16;
+    flex-shrink: 0;
+    background: var(--ink-2);
+    overflow: hidden;
+  }
+  .cinema video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s;
+  }
+  .cinema video.on { opacity: 1; }
+  .cinema .tag {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    z-index: 5;
+    font: 400 10px var(--mono);
+    letter-spacing: 0.2em;
+    color: var(--paper);
+    background: rgba(28, 31, 33, 0.72);
+    padding: 5px 10px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    max-width: 620px;
+    min-width: 0;
+  }
+  h1 {
+    font: 600 clamp(22px, 2.6vw, 36px) var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+  }
+  .meta { margin-top: 10px; color: var(--stone); font-size: 10px; }
+  .text { margin-top: 2.4vh; }
+  .text p {
+    font: 400 15px/1.7 var(--body);
+    color: var(--paper-dim);
+    margin-bottom: 10px;
+  }
+  .maplabel { margin-top: 2.6vh; color: var(--mute); font-size: 10px; }
+  .mapwrap {
+    position: relative;
+    margin-top: 1.2vh;
+    align-self: flex-start;
+    min-height: 0;
+    flex: 1;
+    display: flex;
+  }
+  .mapwrap .mapinner { position: relative; height: 100%; }
+  .mapwrap img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* a map pin is a map pin */
+    background: var(--ink-bg);
+    color: var(--paper);
+    font: 400 10px var(--mono);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--paper);
+    transition: transform 0.2s, background 0.2s, color 0.2s;
+  }
+  .pin:hover { transform: translate(-50%, -50%) scale(1.25); background: var(--hover); }
+  .pin.on { background: var(--stone); color: var(--ink-bg); border-color: var(--ink-bg); }
+
+  /* ---------- mobile: vertical scroll ---------- */
+  @media (max-width: 860px) {
+    html, body { height: auto; overflow: auto; }
+    body { display: block; }
+    header { padding: 22px 24px 0; }
+    /* phone order: text + map first, film last — saves the long scrolls
+       between picking a pin and seeing the sculpture */
+    .book { display: flex; flex-direction: column; padding: 20px 24px 60px; }
+    .content { order: 1; max-width: none; margin-top: 12px; }
+    .cinema { order: 2; height: auto; width: min(78vw, 420px); aspect-ratio: 9 / 16; margin: 32px auto 0; }
+    .mapwrap { flex: none; }
+    .mapwrap .mapinner { height: auto; width: 100%; }
+    .mapwrap img { height: auto; width: 100%; }
+  }
+</style>
+
+<header>
+  <a class="wm" href="index.html">normal.</a>
+  <a class="back" href="index.html#work">BACK TO WORK</a>
+</header>
+
+<div class="book">
+  <div class="cinema" id="cinema">
+    <div class="tag" id="tag">SCULPTURE 1</div>
+  </div>
+
+  <div class="content">
+    <h1>A Brutalist Sculpture Show</h1>
+    <div class="meta mono">PLAY · THE BARBICAN, LONDON · PHOTOGRAPHY + AI</div>
+
+    <div class="text">
+      <p>Welcome to the private view of a sculpture show, at The Barbican in London… with a little help from AI.</p>
+      <p>In the heart of the Barbican Estate is the typically hard to find 'Sculpture Court'. Next to the disused original entrance to the art gallery, it was designed for open air sculpture exhibitions, but has no sculptures. This 'Brutalist Sculpture Show' series uses photography and AI to imagine what could have been.</p>
+    </div>
+
+    <div class="maplabel mono">SCULPTURE COURT — CLICK A LOCATION</div>
+    <div class="mapwrap">
+      <div class="mapinner">
+        <img src="about-assets/cs/brutalist/map_clean.jpg" alt="Map of the Sculpture Court">
+        <div id="pins"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* red-dot positions detected from Guy's marked maps (percent of map image).
+   Loops are LOCAL files (about-assets/cs/brutalist) — instant switching,
+   no Vimeo round-trip. */
+const SCULPTURES = [
+  { n: 1, src: 'about-assets/cs/brutalist/sculpture1.mp4', x: 40.1, y: 42.0 },
+  { n: 2, src: 'about-assets/cs/brutalist/sculpture2.mp4', x: 75.5, y: 51.1 },
+  { n: 3, src: 'about-assets/cs/brutalist/sculpture3.mp4', x: 20.4, y: 58.2 },
+  { n: 4, src: 'about-assets/cs/brutalist/sculpture4.mp4', x: 51.5, y: 35.5 },
+  { n: 5, src: 'about-assets/cs/brutalist/sculpture5.mp4', x: 47.3, y: 35.7 },
+  { n: 6, src: 'about-assets/cs/brutalist/sculpture6.mp4', x: 41.7, y: 37.6 },
+  { n: 7, src: 'about-assets/cs/brutalist/sculpture7.mp4', x: 62.1, y: 56.6 },
+];
+
+const cinema = document.getElementById('cinema');
+const tag = document.getElementById('tag');
+const pinsEl = document.getElementById('pins');
+const vids = [];
+
+SCULPTURES.forEach((s, i) => {
+  const v = document.createElement('video');
+  v.src = s.src;
+  v.muted = true;
+  v.loop = true;
+  v.playsInline = true;
+  v.setAttribute('playsinline', '');
+  v.preload = i === 0 ? 'auto' : 'metadata';
+  if (i === 0) { v.classList.add('on'); v.autoplay = true; v.play().catch(() => {}); }
+  cinema.insertBefore(v, tag);
+  vids.push(v);
+
+  const p = document.createElement('div');
+  p.className = 'pin' + (i === 0 ? ' on' : '');
+  p.textContent = s.n;
+  p.style.left = s.x + '%';
+  p.style.top = s.y + '%';
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pin').forEach(x => x.classList.remove('on'));
+    p.classList.add('on');
+    vids.forEach((f, j) => {
+      f.classList.toggle('on', j === i);
+      if (j === i) { f.currentTime = 0; f.play().catch(() => {}); }
+      else f.pause();
+    });
+    tag.textContent = 'SCULPTURE ' + s.n;
+  });
+  pinsEl.appendChild(p);
+});
+</script>

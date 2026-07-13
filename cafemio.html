@@ -1,0 +1,554 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>normal. — cafemio</title>
+<style>
+  @font-face {
+    font-family: 'Archivo Narrow';
+    font-style: normal;
+    font-weight: 600;
+    src: url(about-assets/archivo-narrow-600.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/nunito-400.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/jetbrains-mono-400.woff2) format('woff2');
+  }
+  /* light theme — the landing's cream ground + ink */
+  :root {
+    --bg: #f4f1ea;
+    --frame: #e9e5db;
+    --ink: #2f3537;
+    --ink-soft: #565b5e;
+    --mute: #8a857a;
+    --rule: rgba(47, 53, 55, 0.16);
+    --stone: #c9b49a;
+    --hover: #c0562f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --narrow: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --times: 'Times New Roman', Times, serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+  }
+  .mono {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  header {
+    padding: 30px 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .wm {
+    font: 700 25px var(--times);
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .back {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--hover); }
+  main { max-width: 1100px; margin: 0 auto; padding: 4px 90px 90px; }
+  h1 {
+    font: 600 clamp(28px, 4vw, 46px) var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+  }
+  .meta { margin-top: 10px; color: var(--mute); font-size: 10px; }
+
+  .hero { margin-top: 32px; }
+  .hero img { display: block; width: 100%; height: auto; }
+
+  .intro { margin-top: 36px; max-width: 640px; }
+  p {
+    font: 400 16px/1.75 var(--body);
+    color: var(--ink-soft);
+  }
+  .intro p + p { margin-top: 12px; }
+
+  section { margin-top: 76px; }
+  .sechead {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+  }
+  .sechead .num {
+    font: 400 12px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--mute);
+  }
+  .sechead h2 {
+    font: 600 24px var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+  }
+  section > p { margin-top: 16px; max-width: 620px; }
+
+  .row { display: grid; gap: 26px; margin-top: 26px; align-items: start; }
+  .row.two { grid-template-columns: 1fr 1fr; }
+  .row.three { grid-template-columns: 1fr 1fr 1fr; }
+  /* photographic prints — white-bordered artifacts on the cream ground */
+  .ph {
+    position: relative;
+    background: #ffffff;
+    padding: 7px 7px 26px;
+  }
+  .ph img { display: block; width: 100%; height: auto; }
+  .ph .cap {
+    position: absolute;
+    left: 9px;
+    bottom: 8px;
+    right: 9px;
+    font: 400 8.5px var(--mono);
+    letter-spacing: 0.16em;
+    color: #6e6a60;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* production notes — artifacts from the process, they keep their paper */
+  .note {
+    position: absolute;
+    z-index: 5;
+    max-width: 200px;
+    background: #f6efa6;
+    color: #3a382f;
+    padding: 14px 14px 16px;
+    font: 400 10px/1.6 var(--mono);
+    letter-spacing: 0.03em;
+    transform: rotate(-2.5deg);
+  }
+  .note.r { transform: rotate(2deg); }
+
+  /* the films — looping thumbnails with the WORK-page play badge */
+  .films { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 26px; }
+  .films a.frame {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: var(--frame);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .films a.frame:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .films video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .films .play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 74px;
+    height: 50px;
+    fill: rgba(244, 241, 234, 0.5);
+    pointer-events: none;
+    transition: fill 0.25s ease;
+  }
+  .films a.frame:hover .play { fill: rgba(244, 241, 234, 0.8); }
+  .films .lbl { margin-top: 10px; color: var(--mute); font-size: 10px; }
+
+  /* ---------- player overlay (as on the WORK page) ---------- */
+  #playerOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 31, 33, 0.96);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    z-index: 20;
+    padding: 24px;
+  }
+  #playerOverlay.open { opacity: 1; pointer-events: auto; }
+  #playerOverlay .ovbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    width: min(1100px, 90vw);
+    margin-bottom: 14px;
+    font: 400 11px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+  #playerOverlay .ovbar .ovtitle { color: #c7c4bc; }
+  #playerOverlay .ovbar button {
+    appearance: none;
+    background: none;
+    border: none;
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: #f4f1ea;
+    cursor: pointer;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  #playerOverlay .ovbar button:hover { color: var(--hover); }
+  #playerOverlay iframe {
+    border: 0;
+    background: #000;
+    display: block;
+    width: min(1100px, 90vw);
+    height: calc(min(1100px, 90vw) * 0.5625);
+  }
+
+  /* formats wall: equal heights, natural widths, synced playback */
+  .wall {
+    display: flex;
+    gap: 14px;
+    margin-top: 26px;
+    align-items: flex-end;
+    justify-content: center;
+    height: 300px;
+  }
+  .fmt { position: relative; height: 100%; background: var(--frame); }
+  .fmt video { display: block; height: 100%; width: auto; }
+  .fmt .tag {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font: 400 9px var(--mono);
+    letter-spacing: 0.2em;
+    color: #f4f1ea;
+    background: rgba(28, 31, 33, 0.72);
+    padding: 4px 8px;
+  }
+  /* controls in the WORK-page selector style: difference-blend type —
+     on the light ground the selected box fills ink, and the white
+     difference type inverts to read light */
+  .wallctl { display: flex; gap: 12px; margin-top: 18px; }
+  .btn {
+    all: unset;
+    cursor: pointer;
+    border: 1px solid rgba(47, 53, 55, 0.32);
+    padding: 10px 22px;
+    transition: background-color 0.35s ease, border-color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn span {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+  .btn:hover { border-color: rgba(47, 53, 55, 0.72); }
+  .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .btn.on {
+    background: rgba(47, 53, 55, 0.92);
+    border-color: rgba(47, 53, 55, 0.92);
+  }
+
+  @media (max-width: 760px) {
+    header { padding: 22px 24px; }
+    main { padding: 4px 24px 70px; }
+    .row.two, .row.three, .films { grid-template-columns: 1fr; }
+    .note {
+      position: static;
+      max-width: none;
+      margin-top: 14px;
+      display: block;
+      transform: rotate(-1.5deg);
+    }
+    /* one row, full-bleed to the screen edges, like desktop */
+    .wall { gap: 6px; margin-left: -24px; margin-right: -24px; }
+  }
+</style>
+
+<header>
+  <a class="wm" href="index.html">normal.</a>
+  <a class="back" href="index.html#work">BACK TO WORK</a>
+</header>
+<main>
+  <h1>Cafemio</h1>
+  <div class="meta mono">WORK · RAUCH · LAUNCH CAMPAIGN IN 8 COUNTRIES · 72 FILMS</div>
+
+  <div class="hero"><img src="about-assets/cs/cafemio/hero.jpg" alt="Cafemio opening still"></div>
+
+  <div class="intro">
+    <p>Cafemio launched in eight countries with two AI-cast leads, a sun-drenched Adriatic square that doesn't quite exist, and 72 versions of the films — 15, 10 and 6 seconds in every aspect ratio a media plan could ask for.</p>
+    <p>This is how Mila and Luka came to be.</p>
+  </div>
+
+  <section>
+    <div class="sechead"><span class="num">01</span><h2>Casting</h2></div>
+    <p>Casting worked the way casting always works — contact sheets, callbacks, strong opinions — except nobody had an agent. Hundreds of candidates were generated, reviewed and argued over. The final Mila is a combination of two finalists: one had the right warmth, the other the right bones.</p>
+    <div class="row two">
+      <div class="ph">
+        <img src="about-assets/cs/cafemio/casting_grid.jpg" alt="Casting contact sheet">
+        <div class="cap">CASTING SESSION 01 — CONTACT SHEET</div>
+        <div class="note" style="right:-18px;top:-20px;">"This one has some weird choices but the bottom left one is ok"</div>
+      </div>
+      <div class="ph">
+        <img src="about-assets/cs/cafemio/casting_1.jpg" alt="Casting callback">
+        <div class="cap">CALLBACK</div>
+        <div class="note r" style="left:-14px;bottom:34px;">"Could be her? But needs low ponytail haircut not high"</div>
+      </div>
+    </div>
+    <div class="row three">
+      <div class="ph"><img src="about-assets/cs/cafemio/casting_2.jpg" alt="Mila — final cast"><div class="cap">MILA — FINAL CAST</div></div>
+      <div class="ph">
+        <img src="about-assets/cs/cafemio/casting_3.jpg" alt="Male casting contact sheet">
+        <div class="cap">CASTING SESSION 02 — CONTACT SHEET</div>
+        <div class="note" style="right:-12px;bottom:-16px;">"FIRST TIME LUCKY?"</div>
+      </div>
+      <div class="ph"><img src="about-assets/cs/cafemio/casting_4.jpg" alt="Luka — final cast"><div class="cap">LUKA — FINAL CAST</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">02</span><h2>Styling</h2></div>
+    <p>Once cast, Luka went through wardrobe. Full coverage sets of looks — linen, knits, tailoring — were screen-tested against the location and the light before the final fitting.</p>
+    <div class="row two">
+      <div class="ph"><img src="about-assets/cs/cafemio/styling_1.jpg" alt="Luka styling coverage 1"><div class="cap">WARDROBE — SESSION 01</div></div>
+      <div class="ph"><img src="about-assets/cs/cafemio/styling_2.jpg" alt="Luka styling coverage 2"><div class="cap">WARDROBE — SESSION 02</div></div>
+    </div>
+    <div class="row two">
+      <div class="ph" style="max-width:420px;"><img src="about-assets/cs/cafemio/styling_final.jpg" alt="Luka final look"><div class="cap">LUKA — FINAL LOOK</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">03</span><h2>Locations</h2></div>
+    <p>The brief called for Adriatic sunshine. We scouted the real thing — Dubrovnik's grand staircases, Split's palm-lined seafront — then built the feeling into a place of our own: a baroque stone staircase on a sunlit square, explored shot by shot until we knew it like a real location.</p>
+    <div class="row two">
+      <div class="ph"><img src="about-assets/cs/cafemio/location_3.jpg" alt="Location exploration coverage"><div class="cap">LOCATION COVERAGE — THE STAIRCASE</div></div>
+      <div class="ph"><img src="about-assets/cs/cafemio/location_4.jpg" alt="Location detail coverage"><div class="cap">LOCATION COVERAGE — DETAILS</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">04</span><h2>The Chair</h2></div>
+    <p>Everything on screen gets cast — including the furniture. The café chair had its own audition: coverage sets of candidates in wicker and wood, screen-tested on the square until one earned the part.</p>
+    <div class="row two">
+      <div class="ph"><img src="about-assets/cs/cafemio/chair_1.jpg" alt="Chair exploration coverage"><div class="cap">CHAIR CASTING — SESSION 01</div></div>
+      <div class="ph"><img src="about-assets/cs/cafemio/chair_2.jpg" alt="Chair exploration coverage"><div class="cap">CHAIR CASTING — SESSION 02</div></div>
+    </div>
+    <div class="row" style="grid-template-columns:1fr;">
+      <div class="ph"><img src="about-assets/cs/cafemio/chair_final.jpg" alt="The chosen chair on set"><div class="cap">THE CHAIR — FINAL SELECTION</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">05</span><h2>Every Format</h2></div>
+    <p>Social campaigns don't live in one shape. Each film was crafted — not cropped — for every placement: 16:9, 4:5, 1:1 and 9:16, all playing here in sync from the same 15 seconds.</p>
+    <div class="wall" id="wall">
+      <div class="fmt"><video muted loop playsinline autoplay preload="auto"></video><div class="tag">16:9</div></div>
+      <div class="fmt"><video muted loop playsinline autoplay preload="auto"></video><div class="tag">1:1</div></div>
+      <div class="fmt"><video muted loop playsinline autoplay preload="auto"></video><div class="tag">4:5</div></div>
+      <div class="fmt"><video muted loop playsinline autoplay preload="auto"></video><div class="tag">9:16</div></div>
+    </div>
+    <div class="wallctl">
+      <button class="btn on" data-who="mila"><span>MILA</span></button>
+      <button class="btn" data-who="luka"><span>LUKA</span></button>
+      <button class="btn" id="wallSound"><span>SOUND ON</span></button>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="num">06</span><h2>The Films</h2></div>
+    <p>Two leads, one square, 72 deliverables: 15s, 10s and 6s in 16:9, 1:1, 4:5 and 9:16, each with three alternate pack shots. Where the product needed to be exactly right, generative AI was combined with bespoke CGI and Nuke compositing — so every bottle, label and pour is accurate to the real thing.</p>
+    <div class="row two" style="margin-top:26px;">
+      <div class="ph"><img src="about-assets/cs/cafemio/frame_3.jpg" alt="Film frame"><div class="cap">FRAME — PACK SHOT</div></div>
+      <div class="ph"><img src="about-assets/cs/cafemio/luka_shot.jpg" alt="Film frame — Luka"><div class="cap">FRAME — LUKA</div></div>
+    </div>
+    <div class="films">
+      <div>
+        <a class="frame" href="https://vimeo.com/1207013277" data-vimeo="1207013277" data-title="CAFE MIO — MILA" aria-label="Play Cafe Mio — Mila">
+          <video muted playsinline preload="auto"
+                 poster="about-assets/poster-work-mila.jpg" src="about-assets/work-mila.mp4"></video>
+          <svg class="play" viewBox="0 0 74 50" aria-hidden="true"><path fill-rule="evenodd" d="M10 0 H64 Q74 0 74 10 V40 Q74 50 64 50 H10 Q0 50 0 40 V10 Q0 0 10 0 Z M28 11 L52 25 L28 39 Z"/></svg>
+        </a>
+        <div class="lbl mono">CAFE MIO — MILA</div>
+      </div>
+      <div>
+        <a class="frame" href="https://vimeo.com/1207013485" data-vimeo="1207013485" data-title="CAFEMIO — LUKA" aria-label="Play Cafemio — Luka">
+          <video muted playsinline preload="auto"
+                 poster="about-assets/poster-work-luka.jpg" src="about-assets/work-luka.mp4"></video>
+          <svg class="play" viewBox="0 0 74 50" aria-hidden="true"><path fill-rule="evenodd" d="M10 0 H64 Q74 0 74 10 V40 Q74 50 64 50 H10 Q0 50 0 40 V10 Q0 0 10 0 Z M28 11 L52 25 L28 39 Z"/></svg>
+        </a>
+        <div class="lbl mono">CAFEMIO — LUKA</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="playerOverlay" role="dialog" aria-modal="true" aria-label="Film player">
+  <div class="ovbar">
+    <span class="ovtitle" id="ovTitle"></span>
+    <button id="ovClose" aria-label="Close player">CLOSE</button>
+  </div>
+  <div id="ovWrap"><iframe id="ovFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+<script>
+/* ---------------- formats wall: one clock, four shapes ---------------- */
+const RATIOS = ['16-9', '1-1', '4-5', '9-16'];
+const FMT_SRC = {
+  'mila_16-9': 'about-assets/cs/cafemio/formats/mila_16-9.mp4',
+  'mila_4-5':  'about-assets/cs/cafemio/formats/mila_4-5.mp4',
+  'mila_1-1':  'about-assets/cs/cafemio/formats/mila_1-1.mp4',
+  'mila_9-16': 'about-assets/cs/cafemio/formats/mila_9-16.mp4',
+  'luka_16-9': 'about-assets/cs/cafemio/formats/luka_16-9.mp4',
+  'luka_4-5':  'about-assets/cs/cafemio/formats/luka_4-5.mp4',
+  'luka_1-1':  'about-assets/cs/cafemio/formats/luka_1-1.mp4',
+  'luka_9-16': 'about-assets/cs/cafemio/formats/luka_9-16.mp4',
+};
+const wall = document.getElementById('wall');
+const wallVids = [...document.querySelectorAll('#wall video')];
+
+/* fit the wall to its container: total width = height × (16/9 + 1/1 + 4/5 + 9/16) + gaps */
+const RATIO_SUM = 16 / 9 + 1 + 4 / 5 + 9 / 16;
+function fitWall() {
+  const gap = parseFloat(getComputedStyle(wall).gap) || 14;
+  const h = Math.min(340, (wall.clientWidth - gap * 3) / RATIO_SUM);
+  wall.style.height = h + 'px';
+}
+window.addEventListener('resize', fitWall);
+fitWall();
+const soundBtn = document.getElementById('wallSound');
+let who = 'mila';
+
+function loadWall() {
+  wallVids.forEach((v, i) => { v.src = FMT_SRC[who + '_' + RATIOS[i]]; v.load(); });
+  Promise.all(wallVids.map(v => new Promise(r => { v.oncanplay = r; }))).then(() => {
+    wallVids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
+  });
+}
+loadWall();
+
+/* drift correction: slave the other three to the 16:9 master */
+const master = wallVids[0];
+setInterval(() => {
+  wallVids.slice(1).forEach(v => {
+    if (Math.abs(v.currentTime - master.currentTime) > 0.09) v.currentTime = master.currentTime;
+  });
+}, 400);
+
+document.querySelectorAll('.wallctl [data-who]').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.who === who) return;
+  who = b.dataset.who;
+  document.querySelectorAll('.wallctl [data-who]').forEach(x => x.classList.toggle('on', x.dataset.who === who));
+  const wasUnmuted = !master.muted;
+  loadWall();
+  master.muted = !wasUnmuted ? true : false;
+}));
+soundBtn.addEventListener('click', () => {
+  master.muted = !master.muted;
+  soundBtn.querySelector('span').textContent = master.muted ? 'SOUND ON' : 'SOUND OFF';
+});
+
+/* ---------------- film player overlay (WORK-page pattern) ---------------- */
+const COARSE = matchMedia('(any-pointer: coarse)').matches;
+const overlay = document.getElementById('playerOverlay');
+const ovTitle = document.getElementById('ovTitle');
+const ovWrap = document.getElementById('ovWrap');
+let ovFrame = document.getElementById('ovFrame');
+
+document.querySelectorAll('.films a.frame').forEach(a => a.addEventListener('click', (e) => {
+  e.preventDefault();
+  ovTitle.textContent = a.dataset.title;
+  // fresh iframe per open; desktop autoplays with sound, iOS/iPadOS gets the
+  // unmute-inside-the-tap treatment (see the WORK page)
+  const fresh = document.createElement('iframe');
+  fresh.id = 'ovFrame';
+  fresh.allow = 'autoplay; fullscreen; picture-in-picture';
+  fresh.allowFullscreen = true;
+  const params = COARSE
+    ? 'playsinline=1&title=0&byline=0&portrait=0'
+    : 'autoplay=1&title=0&byline=0&portrait=0';
+  fresh.src = 'https://player.vimeo.com/video/' + a.dataset.vimeo + '?' + params;
+  ovWrap.replaceChild(fresh, ovFrame);
+  ovFrame = fresh;
+  if (COARSE && window.Vimeo) {
+    const vp = new Vimeo.Player(fresh);
+    vp.setMuted(false).catch(() => {});
+    vp.play().catch(() => {});
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}));
+
+function closeFilm() {
+  overlay.classList.remove('open');
+  ovFrame.src = 'about:blank';
+  document.body.style.overflow = '';
+}
+document.getElementById('ovClose').addEventListener('click', closeFilm);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeFilm(); });
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && overlay.classList.contains('open')) closeFilm();
+});
+
+/* ---------------- sine-loop thumbnails ---------------- */
+/* the same 0 -> end -> 0 soft-turnaround loop as the WORK/ABOUT scroll
+   movies, but driven by the clock instead of the scroll:
+   t = D/2 * (1 - cos(omega*now)); omega = 2/D gives natural playback speed
+   mid-loop, easing to a standstill at both ends. The encodes are
+   every-frame-keyframe, so scrubbing is smooth. */
+const sines = [...document.querySelectorAll('.films video')].map(v => ({ v, dur: 0 }));
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches && sines.length) {
+  const prime = (s) => {
+    if (s.primed) return;
+    s.primed = true;
+    const p = s.v.play();
+    if (p && p.then) p.then(() => s.v.pause()).catch(() => { s.primed = false; });
+    else s.v.pause();
+  };
+  sines.forEach(s => {
+    s.v.load();
+    s.v.addEventListener('loadedmetadata', () => { s.dur = s.v.duration; });
+    prime(s);
+  });
+  window.addEventListener('touchstart', () => sines.forEach(prime), { once: true, passive: true });
+  window.addEventListener('pointerdown', () => sines.forEach(prime), { once: true });
+  (function sineLoop(now) {
+    if (!document.hidden) {
+      for (const s of sines) {
+        const D = s.dur;
+        if (!D || !isFinite(D) || s.v.seeking || s.v.readyState < 2) continue;
+        /* period = 4D: half natural pace — unhurried, with soft landings */
+        const t = D * 0.5 * (1 - Math.cos((Math.PI / (2 * D)) * now / 1000));
+        if (Math.abs(t - s.v.currentTime) > 0.008) {
+          s.v.currentTime = Math.min(Math.max(t, 0), D - 0.05);
+        }
+      }
+    }
+    requestAnimationFrame(sineLoop);
+  })(0);
+}
+</script>

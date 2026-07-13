@@ -1,0 +1,132 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>normal. — aaargh zombies!</title>
+<style>
+  @font-face {
+    font-family: 'Archivo Narrow';
+    font-style: normal;
+    font-weight: 600;
+    src: url(about-assets/archivo-narrow-600.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/nunito-400.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/jetbrains-mono-400.woff2) format('woff2');
+  }
+  :root {
+    --ink-bg: #1c1f21;
+    --ink-2: #23272a;
+    --paper: #f4f1ea;
+    --paper-dim: #c7c4bc;
+    --mute: #8e9497;
+    --rule: rgba(244, 241, 234, 0.13);
+    --stone: #c9b49a;
+    --hover: #c0562f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --narrow: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --times: 'Times New Roman', Times, serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink-bg);
+    color: var(--paper);
+    font-family: var(--body);
+    min-height: 100vh;
+  }
+  .mono {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  header {
+    padding: 30px 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .wm {
+    font: 700 25px var(--times);
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .back {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--paper-dim);
+    text-decoration: none;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--hover); }
+  main { max-width: 1240px; margin: 0 auto; padding: 4px 90px 80px; }
+  h1 {
+    font: 600 clamp(26px, 4vw, 44px) var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+  }
+  .meta { margin-top: 10px; color: var(--stone); font-size: 10px; }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-top: 36px;
+  }
+  .z {
+    position: relative;
+    aspect-ratio: 240 / 386;
+    background: var(--ink-2);
+    overflow: hidden;
+  }
+  .z iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 102%;
+    height: 102%;
+    transform: translate(-50%, -50%);
+    border: 0;
+    pointer-events: none;
+  }
+  .text { max-width: 640px; margin-top: 44px; }
+  .text p {
+    font: 400 16px/1.75 var(--body);
+    color: var(--paper-dim);
+  }
+  @media (max-width: 900px) {
+    header { padding: 22px 24px; }
+    main { padding: 4px 24px 60px; }
+    .row { grid-template-columns: repeat(2, 1fr); }
+    .text { margin-top: 32px; }
+  }
+</style>
+
+<header>
+  <a class="wm" href="index.html">normal.</a>
+  <a class="back" href="index.html#work">BACK TO WORK</a>
+</header>
+<main>
+  <h1>Aaargh Zombies!</h1>
+  <div class="meta mono">PLAY · PUBLIC INFORMATION CAMPAIGN · TRANSPORT FOR ZOMBIES</div>
+
+  <div class="row">
+    <div class="z"><iframe src="https://player.vimeo.com/video/973145090?background=1&autoplay=1&muted=1&autopause=0" allow="autoplay" title="Zombie 1"></iframe></div>
+    <div class="z"><iframe src="https://player.vimeo.com/video/973142569?background=1&autoplay=1&muted=1&autopause=0" allow="autoplay" title="Zombie 2"></iframe></div>
+    <div class="z"><iframe src="https://player.vimeo.com/video/973140911?background=1&autoplay=1&muted=1&autopause=0" allow="autoplay" title="Zombie 3"></iframe></div>
+    <div class="z"><iframe src="https://player.vimeo.com/video/973138099?background=1&autoplay=1&muted=1&autopause=0" allow="autoplay" title="Zombie 4"></iframe></div>
+  </div>
+
+  <div class="text">
+    <p>Created in the early days of generative video, a public information campaign on the 'smart phone zombie' phenomenon that's taken over London's streets. Probably too dark for TFL, but fortunately this is Transport for Zombies, so it's totally on-brand.</p>
+  </div>
+</main>
