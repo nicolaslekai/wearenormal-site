@@ -283,8 +283,8 @@ ov.addEventListener('click',e=>{if(e.target===ov)closeOv();});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
 
 /* ---------- scroll-driven transform (2022 -> 2026) ---------- */
-const scenes=[...document.querySelectorAll('[data-scene]')].map(sec=>({
-  sec,
+const scenes=[...document.querySelectorAll('[data-scene]')].map((sec,i)=>({
+  sec,first:i===0,
   oldImg:sec.querySelector('img.old'),
   newImg:sec.querySelector('img.new'),
   year:sec.querySelector('[data-year]'),
@@ -302,8 +302,17 @@ function tick(){
   for(const s of scenes){
     const r=s.sec.getBoundingClientRect();
     const total=r.height-vh;
-    const p=clamp(-r.top/total,0,1);
-    const t=ease(clamp((p-0.3)/0.5,0,1));
+    let t;
+    if(s.first){
+      // hero: develop only while pinned
+      const p=clamp(-r.top/total,0,1);
+      t=ease(clamp((p-0.3)/0.5,0,1));
+    }else{
+      // later scenes: progress includes the approach, so the develop
+      // (and the year counter) starts as the image scrolls into view
+      const p=clamp((vh-r.top)/(vh+total),0,1);
+      t=ease(clamp((p-0.12)/0.6,0,1));
+    }
     s.newImg.style.opacity=t;
     s.oldImg.style.transform=`scale(${1.04-0.04*t})`;
     s.newImg.style.transform=`scale(${1.02-0.02*t})`;
