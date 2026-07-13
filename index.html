@@ -198,22 +198,63 @@ const FILMS=[
 const stream=document.getElementById('stream')||document.querySelector('.stream');
 FILMS.forEach(f=>{
   const el=document.createElement('div');el.className='film';
-  el.innerHTML=`<video src="${A+f.vid}" poster="${A+f.img}" muted loop playsinline preload="none"></video>
+  el.innerHTML=`<video src="${A+f.vid}" poster="about-assets/poster-${f.vid.replace('.mp4','')}.jpg" data-scrub muted playsinline preload="auto"></video>
     <div class="fshade"></div>
     <div class="fcap"><span class="ft">${f.t}</span><span class="fc">${f.c}</span></div>
     <div class="watch">${f.cs?'Case study':'Watch full film'} ↗</div>`;
   el.addEventListener('click',()=>{ if(f.cs){location.href=f.cs;} else openFilm(f); });
   stream.appendChild(el);
 });
-/* play only what's on screen */
-const vio=new IntersectionObserver(es=>{
-  es.forEach(e=>{
-    const v=e.target.querySelector('video');
-    if(e.intersectionRatio>0.35){v.play().catch(()=>{});}
-    else{v.pause();}
+/* scroll-scrubbed thumbnails (ported from the V3 build):
+   scroll drives a sine phase — the clip runs 0 -> end -> 0 across the tile's travel */
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const scrubs=[...document.querySelectorAll('video[data-scrub]')].map(v=>({
+  v,section:v.closest('.film'),cur:0,target:0,active:false,rate:null}));
+if(!reduceMotion&&scrubs.length){
+  const prime=(s)=>{
+    if(s.primed)return;
+    s.primed=true;s.v.muted=true;
+    const p=s.v.play();
+    if(p&&p.then)p.then(()=>s.v.pause()).catch(()=>{s.primed=false;});
+    else s.v.pause();
+  };
+  scrubs.forEach(s=>{
+    s.v.load();
+    s.v.addEventListener('loadedmetadata',()=>{
+      s.dur=s.v.duration;
+      if(s.rate==null)s.rate=Math.min(0.5,2.5/s.dur);
+    });
   });
-},{threshold:[0,0.35,1]});
-document.querySelectorAll('.film').forEach(f=>vio.observe(f));
+  const primeAll=()=>scrubs.forEach(prime);
+  window.addEventListener('touchstart',primeAll,{once:true,passive:true});
+  window.addEventListener('pointerdown',primeAll,{once:true});
+  window.addEventListener('scroll',primeAll,{once:true,passive:true});
+  const sio=new IntersectionObserver((entries)=>{
+    for(const e of entries){
+      const s=scrubs.find(s=>s.section===e.target);
+      if(!s)continue;
+      s.active=e.isIntersecting;
+      if(s.active)prime(s);
+    }
+  },{rootMargin:'15% 0px'});
+  scrubs.forEach(s=>sio.observe(s.section));
+  (function scrubLoop(){
+    const vh=window.innerHeight;
+    for(const s of scrubs){
+      const D=s.dur||s.v.duration;
+      if(!s.active||!D||!isFinite(D)||s.rate==null)continue;
+      const r=s.section.getBoundingClientRect();
+      const p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
+      s.target=D*0.5*(1-Math.cos(p*Math.PI*2*s.rate));
+      if(s.v.seeking||s.v.readyState<1)continue;
+      s.cur+=(s.target-s.cur)*0.18;
+      if(Math.abs(s.cur-s.v.currentTime)>0.02){
+        s.v.currentTime=Math.min(Math.max(s.cur,0),D-0.05);
+      }
+    }
+    requestAnimationFrame(scrubLoop);
+  })();
+}
 
 /* ---------- people ---------- */
 const PEOPLE=[
