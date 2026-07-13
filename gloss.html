@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>normal. — gloss theory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face {
+    font-family: 'Archivo Narrow';
+    font-style: normal;
+    font-weight: 600;
+    src: url(about-assets/archivo-narrow-600.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/nunito-400.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url(about-assets/jetbrains-mono-400.woff2) format('woff2');
+  }
+  :root {
+    --ink-bg: #1c1f21;
+    --ink-2: #23272a;
+    --paper: #f4f1ea;
+    --paper-dim: #c7c4bc;
+    --mute: #8e9497;
+    --rule: rgba(244, 241, 234, 0.13);
+    --stone: #c9b49a;
+    --hover: #c0562f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --narrow: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --times: 'Times New Roman', Times, serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink-bg);
+    color: var(--paper);
+    font-family: var(--body);
+    min-height: 100vh;
+  }
+  .mono {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  header {
+    padding: 30px 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .wm {
+    font: 700 25px var(--times);
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .back {
+    font: 400 11px var(--mono);
+    letter-spacing: 0.24em;
+    color: var(--paper-dim);
+    text-decoration: none;
+    padding: 10px 6px;
+    margin: -10px -6px;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: var(--hover); }
+  main { max-width: 1240px; margin: 0 auto; padding: 4px 90px 80px; }
+  h1 {
+    font: 600 clamp(26px, 4vw, 44px) var(--narrow);
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    line-height: 1.05;
+  }
+  .meta { margin-top: 10px; color: var(--stone); font-size: 10px; }
+  .player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--ink-2);
+    margin-top: 36px;
+    overflow: hidden;
+  }
+  .player iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .cap {
+    font: 400 10px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mute);
+    margin-top: 12px;
+  }
+  .text { max-width: 640px; margin-top: 44px; }
+  .text p {
+    font: 400 16px/1.75 var(--body);
+    color: var(--paper-dim);
+  }
+  .stack {
+    margin-top: 22px;
+    color: var(--stone);
+    font-size: 10px;
+  }
+  figure { margin-top: 56px; }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--ink-2);
+  }
+  figcaption {
+    font: 400 10px var(--mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mute);
+    margin-top: 12px;
+  }
+  @media (max-width: 900px) {
+    header { padding: 22px 24px; }
+    main { padding: 4px 24px 60px; }
+    .text { margin-top: 32px; }
+    figure { margin-top: 40px; }
+  }
+</style>
+
+<header>
+  <a class="wm" href="index.html">normal.</a>
+  <a class="back" href="index.html#work">BACK TO WORK</a>
+</header>
+<main>
+  <h1>Gloss Theory</h1>
+  <div class="meta mono">PLAY · R&amp;D · FULLY GENERATIVE PIPELINE</div>
+
+  <div class="player">
+    <iframe src="https://player.vimeo.com/video/1207015256?title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Gloss Theory"></iframe>
+  </div>
+  <div class="cap">GLOSS THEORY — THE 15-SECOND FILM, 4K. PLAY WITH SOUND.</div>
+
+  <div class="text">
+    <p>An internal R&amp;D project — a fully generative campaign pipeline, end to end. A haircare beauty film with no shoot: one face, character-locked across every angle, the actives rendered as ribbons of liquid glass.</p>
+    <div class="stack mono">BUILT WITH — NANO BANANA · SEEDANCE · SUNO · ELEVENLABS · DAVINCI RESOLVE · NUKE</div>
+  </div>
+
+  <figure>
+    <img src="about-assets/cs/gloss/faces.jpg" alt="Character-locked faces" loading="lazy">
+    <figcaption>CHARACTER-LOCKED ACROSS EVERY ANGLE — FRONT, THREE-QUARTER AND PROFILE.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="about-assets/cs/gloss/actives.jpg" alt="The actives rendered as glass" loading="lazy">
+    <figcaption>THE ACTIVES, RENDERED AS GLASS — OMEGA GLOSS-9, AQUA-SILK, GLOW ACID, FRIZZ-SHIELD.</figcaption>
+  </figure>
+</main>
+</html>
