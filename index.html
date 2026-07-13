@@ -309,10 +309,11 @@ function tick(){
       const p=clamp(-r.top/total,0,1);
       t=ease(clamp((p-0.3)/0.5,0,1));
     }else{
-      // later scenes: progress includes the approach, so the develop
-      // (and the year counter) starts as the image scrolls into view
+      // later scenes: progress includes the approach, ease-out so the develop
+      // (and the year counter) is visibly underway as soon as the image enters
       const p=clamp((vh-r.top)/(vh+total),0,1);
-      t=ease(clamp((p-0.12)/0.6,0,1));
+      const x=clamp((p-0.03)/0.47,0,1);
+      t=1-Math.pow(1-x,3);
     }
     s.newImg.style.opacity=t;
     s.oldImg.style.transform=`scale(${1.04-0.04*t})`;
