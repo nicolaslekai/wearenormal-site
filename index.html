@@ -64,6 +64,10 @@
   .num{position:absolute;top:100px;left:36px;z-index:3;font-family:"Times New Roman",Times,serif;font-style:italic;
     font-size:15px;color:rgba(255,255,255,.6);letter-spacing:.08em;}
 
+  /* ---------- full-bleed stills ---------- */
+  .still{height:100vh;position:relative;overflow:hidden;background:#000;}
+  .still img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
+
   /* ---------- interludes ---------- */
   .inter{min-height:56vh;display:flex;align-items:center;padding:14vh 36px;}
   .inter p{max-width:760px;font-size:clamp(24px,4vw,44px);line-height:1.25;font-weight:700;letter-spacing:-.015em;}
@@ -149,6 +153,11 @@
 <!-- ============ THE STREAM ============ -->
 <section class="stream" id="work"></section>
 
+<!-- ============ STILL: stockmen ============ -->
+<section class="still">
+  <img src="assets/evo/still_stockmen.jpg" alt="">
+</section>
+
 <div class="inter"><p>AI is the best thing to happen to film production in decades. <span class="serif">Leaner shoots, wilder ideas, budgets that end up on screen — a new craft in the hands of people who know the old one.</span></p></div>
 
 <!-- ============ OFFICE SCENE ============ -->
@@ -164,6 +173,11 @@
       <div class="stamp"><div class="yr" data-year>2022</div><div class="rule"></div><div class="md" data-model>DALL·E mini — 256px</div></div>
     </div>
   </div>
+</section>
+
+<!-- ============ STILL: glass ============ -->
+<section class="still">
+  <img src="assets/evo/still_glass.jpg" alt="">
 </section>
 
 <!-- ============ FOOTER ============ -->
