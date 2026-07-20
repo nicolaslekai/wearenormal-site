@@ -30,14 +30,8 @@
   header a.contact{font-size:13px;color:#bbb;transition:color .3s;}
   header a.contact:hover{color:#fff;}
 
-  /* ---------- scene (pinned scroll transform) ---------- */
-  .scene{height:340vh;position:relative;}
-  .pin{position:sticky;top:0;height:100vh;overflow:hidden;}
-  .imgs{position:absolute;inset:0;}
-  .imgs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%;}
-  .imgs img.old{filter:contrast(1.05);}
-  .imgs img.new{opacity:0;}
-  .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,11,.42) 0%,transparent 30%,transparent 70%,rgba(10,10,11,.62) 100%);}
+  /* ---------- hero ---------- */
+  .hero{height:100vh;position:relative;overflow:hidden;}
   /* giant wordmark on the hero */
   .brand{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
     pointer-events:none;text-align:center;}
@@ -50,17 +44,6 @@
     opacity:0;animation:fadein 1s ease .9s forwards;}
   @keyframes rise{to{opacity:1;transform:none;}}
   @keyframes fadein{to{opacity:1;}}
-  /* year counter stamp — centered */
-  .meta{position:absolute;left:0;right:0;bottom:64px;z-index:3;display:flex;justify-content:center;pointer-events:none;}
-  .stamp{text-align:center;}
-  .stamp .yr{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:clamp(52px,7vw,96px);line-height:1;letter-spacing:.01em;
-    color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.6);font-variant-numeric:tabular-nums;display:inline-block;}
-  .stamp .yr.tick{animation:yrtick .28s var(--ease);}
-  @keyframes yrtick{0%{transform:translateY(.14em);opacity:.2;}100%{transform:none;opacity:1;}}
-  .stamp .rule{width:44px;height:1px;background:rgba(255,255,255,.5);margin:14px auto 10px;}
-  .stamp .md{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.7);}
-  .num{position:absolute;top:100px;left:36px;z-index:3;font-family:"Times New Roman",Times,serif;font-style:italic;
-    font-size:15px;color:rgba(255,255,255,.6);letter-spacing:.08em;}
 
   /* ---------- full-bleed stills ---------- */
   .still{height:100vh;position:relative;overflow:hidden;background:#000;}
@@ -131,21 +114,11 @@
   <a class="contact" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
 </header>
 
-<!-- ============ HERO SCENE: the shoot ============ -->
-<section class="scene" data-scene id="top">
-  <div class="pin">
-    <div class="imgs">
-      <img class="old" src="assets/evo/hero_old.png" alt="">
-      <img class="new" src="assets/evo/hero_new.jpg" alt="">
-    </div>
-    <div class="veil"></div>
-    <div class="brand">
-      <div class="wordmark">normal.</div>
-      <div class="tag">A creative studio</div>
-    </div>
-    <div class="meta">
-      <div class="stamp"><div class="yr" data-year>2022</div><div class="rule"></div><div class="md" data-model>DALL·E mini — 256px</div></div>
-    </div>
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="brand">
+    <div class="wordmark">normal.</div>
+    <div class="tag">A creative studio</div>
   </div>
 </section>
 
@@ -156,34 +129,19 @@
 
 <!-- ============ CINEMATIC: The Divide (pt. 1) ============ -->
 <section class="still">
-  <video src="assets/films/divide-1.mp4" poster="assets/films/poster-divide-1.jpg" data-scrub muted playsinline preload="auto"></video>
+  <video src="assets/films/divide-1-web.mp4" poster="assets/films/poster-divide-1.jpg" data-scrub muted playsinline preload="auto"></video>
 </section>
 
 <div class="inter"><p>AI is the best thing to happen to film production in decades. <span class="serif">Leaner shoots, wilder ideas, budgets that end up on screen — a new craft in the hands of people who know the old one.</span></p></div>
 
-<!-- ============ OFFICE SCENE ============ -->
-<section class="scene" data-scene id="studio">
-  <div class="pin">
-    <div class="imgs">
-      <img class="old" src="assets/evo/crew_old.png" alt="">
-      <img class="new" src="assets/evo/crew_new.jpg" alt="">
-    </div>
-    <div class="veil"></div>
-    <div class="num">The crew</div>
-    <div class="meta">
-      <div class="stamp"><div class="yr" data-year>2022</div><div class="rule"></div><div class="md" data-model>DALL·E mini — 256px</div></div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ CINEMATIC: The Divide (pt. 2) ============ -->
 <section class="still">
-  <video src="assets/films/divide-2.mp4" poster="assets/films/poster-divide-2.jpg" data-scrub muted playsinline preload="auto"></video>
+  <video src="assets/films/divide-2-web.mp4" poster="assets/films/poster-divide-2.jpg" data-scrub muted playsinline preload="auto"></video>
 </section>
 
 <!-- ============ CINEMATIC: The Merge ============ -->
 <section class="still">
-  <video src="assets/films/merge-4k.mp4" poster="assets/films/poster-merge.jpg" data-scrub muted playsinline preload="auto"></video>
+  <video src="assets/films/merge-web.mp4" poster="assets/films/poster-merge.jpg" data-scrub muted playsinline preload="auto"></video>
 </section>
 
 <!-- ============ FOOTER ============ -->
@@ -305,53 +263,11 @@ document.getElementById('ovClose').addEventListener('click',closeOv);
 ov.addEventListener('click',e=>{if(e.target===ov)closeOv();});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
 
-/* ---------- scroll-driven transform (2022 -> 2026) ---------- */
-const scenes=[...document.querySelectorAll('[data-scene]')].map((sec,i)=>({
-  sec,first:i===0,
-  oldImg:sec.querySelector('img.old'),
-  newImg:sec.querySelector('img.new'),
-  year:sec.querySelector('[data-year]'),
-  model:sec.querySelector('[data-model]'),
-}));
-const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-const filmEls=[...document.querySelectorAll('.film')];
-function tick(){
-  const vh=innerHeight;
-  // fade thumbnails in as they enter the viewport (driven here, not by IO)
-  for(const f of filmEls){
-    if(!f._in && f.getBoundingClientRect().top<vh*0.92){f._in=true;f.classList.add('in');}
-  }
-  for(const s of scenes){
-    const r=s.sec.getBoundingClientRect();
-    const total=r.height-vh;
-    let t;
-    if(s.first){
-      // hero: develop only while pinned
-      const p=clamp(-r.top/total,0,1);
-      t=ease(clamp((p-0.3)/0.5,0,1));
-    }else{
-      // later scenes: progress includes the approach, ease-out so the develop
-      // (and the year counter) is visibly underway as soon as the image enters
-      const p=clamp((vh-r.top)/(vh+total),0,1);
-      const x=clamp((p-0.15)/0.47,0,1);
-      t=1-Math.pow(1-x,3);
-    }
-    s.newImg.style.opacity=t;
-    s.oldImg.style.transform=`scale(${1.04-0.04*t})`;
-    s.newImg.style.transform=`scale(${1.02-0.02*t})`;
-    // year flips with the develop: 2022 -> 2026
-    const yr=t>0.5?'2026':'2022';
-    if(s.year.textContent!==yr){
-      s.year.textContent=yr;
-      s.year.classList.remove('tick'); void s.year.offsetWidth; s.year.classList.add('tick');
-    }
-    const md=t>0.5?'NORMAL — production grade':'DALL·E mini — 256px';
-    if(s.model.textContent!==md) s.model.textContent=md;
-  }
-  requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
+/* ---------- fade thumbnails in as they enter the viewport ---------- */
+const fio=new IntersectionObserver((es)=>{
+  for(const e of es){ if(e.isIntersecting){ e.target.classList.add('in'); fio.unobserve(e.target); } }
+},{rootMargin:'0px 0px -8%'});
+document.querySelectorAll('.film').forEach(f=>fio.observe(f));
 
 </script>
 </body>
