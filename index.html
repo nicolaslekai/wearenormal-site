@@ -30,9 +30,12 @@
   header a.contact{font-size:13px;color:#bbb;transition:color .3s;}
   header a.contact:hover{color:#fff;}
 
-  /* ---------- hero ---------- */
-  .hero{height:100vh;position:relative;overflow:hidden;}
-  /* giant wordmark on the hero */
+  /* ---------- hero: wordmark over the merge cinematic ---------- */
+  .hero{height:100vh;position:relative;overflow:hidden;background:#000;}
+  .hero img,.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
+  /* subtle scrim so the wordmark reads over the film */
+  .hero::after{content:"";position:absolute;inset:0;z-index:1;
+    background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,.38) 0%,rgba(0,0,0,.12) 45%,transparent 70%);}
   .brand{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
     pointer-events:none;text-align:center;}
   .brand .wordmark{font-family:"Times New Roman",Times,serif;font-weight:700;color:#fff;
@@ -114,17 +117,13 @@
   <a class="contact" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
 </header>
 
-<!-- ============ HERO ============ -->
+<!-- ============ HERO: normal. over the Merge scrub cinematic — one section ============ -->
 <section class="hero" id="top">
+  <video src="assets/films/merge-web.mp4" poster="assets/films/poster-merge.jpg" data-scrub muted playsinline preload="auto"></video>
   <div class="brand">
     <div class="wordmark">normal.</div>
-    <div class="tag">Film · CGI · AI</div>
+    <div class="tag">A creative studio</div>
   </div>
-</section>
-
-<!-- ============ CINEMATIC: The Merge — straight under the logo ============ -->
-<section class="still">
-  <video src="assets/films/merge-web.mp4" poster="assets/films/poster-merge.jpg" data-scrub muted playsinline preload="auto"></video>
 </section>
 
 <div class="inter"><p>We make films for leading brands. <span class="serif">Directors, CGI artists and AI engineers in one room — every frame a combination of all three crafts.</span></p></div>
@@ -146,7 +145,7 @@
   <h2>We are the<br><span class="serif">new</span> normal.</h2>
   <div class="frow">
     <a class="mail" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
-    <div class="fmeta">A creative studio — London · Füssen<br>© 2026 NORMAL</div>
+    <div class="fmeta">NORMAL Studio<br>14 Rivington Street, London EC2A 3DU<br>PO Box 7734, London EC1V 4BB<br>© 2026 NORMAL</div>
   </div>
 </footer>
 
@@ -185,7 +184,7 @@ FILMS.forEach(f=>{
    scroll drives a sine phase — the clip runs 0 -> end -> 0 across the tile's travel */
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scrubs=[...document.querySelectorAll('video[data-scrub]')].map(v=>({
-  v,section:v.closest('.film,.still'),cur:0,target:0,active:false,rate:null}));
+  v,section:v.closest('.film,.still,.hero'),cur:0,target:0,active:false,rate:null}));
 if(!reduceMotion&&scrubs.length){
   const prime=(s)=>{
     if(s.primed)return;
@@ -234,7 +233,6 @@ if(!reduceMotion&&scrubs.length){
 
 /* ---------- people ---------- */
 const PEOPLE=[
-  {name:"Guy Nisbett",role:"Creative Director",vimeo:"1104124501",bio:"Multi-award-winning creative, live action and CGI director. Post and generative AI specialist."},
   {name:"Nicolas Lekai",role:"Technical Director",vimeo:"1104124478",bio:"CGI, Houdini, Nuke and ComfyUI artist. AI consultant, music composer and producer."},
 ];
 const people=document.getElementById('people');
