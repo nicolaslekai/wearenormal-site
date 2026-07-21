@@ -23,13 +23,6 @@
     animation:gm 1.1s steps(2) infinite;}
   @keyframes gm{0%{transform:translate(0,0)}50%{transform:translate(-3%,2%)}100%{transform:translate(2%,-2%)}}
 
-  /* header */
-  header{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
-    padding:24px 36px;mix-blend-mode:difference;}
-  .masthead{font-size:15px;font-weight:700;color:#fff;}
-  header a.contact{font-size:13px;color:#bbb;transition:color .3s;}
-  header a.contact:hover{color:#fff;}
-
   /* ---------- hero: wordmark over the merge cinematic ---------- */
   /* hero + stills pin for ~3 viewport heights so the scroll-scrub develops slowly */
   .hero,.still{height:300vh;position:relative;background:#000;}
@@ -100,11 +93,6 @@
 </head>
 <body>
 <div class="grain"></div>
-
-<header>
-  <a class="masthead" href="#top">normal.</a>
-  <a class="contact" href="mailto:hello@wearenormal.ai">hello@wearenormal.ai</a>
-</header>
 
 <!-- ============ HERO: normal. over the Merge scrub cinematic — one pinned section ============ -->
 <section class="hero" id="top">
